@@ -38,10 +38,13 @@
   .volume>button span{color:var(--muted);font-size:13px;white-space:nowrap}
   .volume>button .chev{color:var(--honey);font-size:20px}
   .lessons{display:none;padding:0 12px 14px}
-  .volume.open .lessons{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .volume.open .lessons{display:block}
   .volume.open .chev{transform:rotate(180deg)}
-  .lessons button{border:1px solid var(--line);background:#fffef9;border-radius:10px;
-    padding:10px 4px;cursor:pointer;font-family:inherit;font-size:15px;color:var(--ink)}
+  .lessons button{display:block;width:100%;border:1px solid var(--line);background:#fffef9;border-radius:10px;
+    padding:11px 14px;margin-bottom:8px;cursor:pointer;font-family:inherit;font-size:15px;color:var(--ink);text-align:left}
+  .lessons button .ltitle{display:block;font-size:13px;color:var(--muted);margin-top:2px}
+  .search{width:100%;border:1px solid var(--line);border-radius:999px;background:var(--card);
+    padding:12px 18px;font-family:inherit;font-size:16px;color:var(--ink);margin-top:16px}
   .lessons button:hover,.lessons button:focus{border-color:var(--honey2);outline:2px solid rgba(217,164,65,.35)}
   /* 課程頁 */
   #lessonView{display:none}
@@ -92,7 +95,8 @@
 
   <main class="wrap">
     <section id="catalog">
-      <div class="note">目錄：十五冊共 270 課。點冊名展開十八課，點課名進入該課的十頁圖卡。圖卡目前為版式佔位，Canva 圖卡順序確認後會直接換上真圖卡，課的順序與頁數不變。</div>
+      <div class="note">目錄：十五冊共 270 課。點冊名展開十八課，點課名進入該課的十頁圖卡。已核對的 11 課已顯示課名，其餘課名待 Canva 後段核對後補上；上方搜尋框可直接找冊名或課名。圖卡目前為版式佔位，Canva 圖卡順序確認後會直接換上真圖卡，課的順序與頁數不變。</div>
+      <input class="search" id="searchInput" type="search" placeholder="搜尋冊名、課名，例如：召會、基督、施恩…" aria-label="搜尋目錄">
       <div id="volumes"></div>
     </section>
 
@@ -144,6 +148,19 @@ var VOLUMES = [
   "第十冊　滿有榮光與卓越的職事","第十一冊　啟示的基督，建造的召會","第十二冊　至寶的基督，榮耀的盼望",
   "第十三冊　敬虔的奧祕　更美的新約","第十四冊　神聖的供備　生命的交通","第十五冊　終極的顯出－新耶路撒冷"
 ];
+/* 已核對範圍的課名（Canva 前段核對結果）；其餘課名待後段核對後補上。鍵為「冊序-課號」，冊序從 0 起算。 */
+var TITLES = {
+  "12-6": "神的經綸與不同的教訓相對", "12-7": "召會的功用", "12-8": "各面的囑咐",
+  "12-10": "召會秩序的維持", "12-11": "基督超越天使", "12-12": "元帥、大祭司、使徒、神家的建設者",
+  "12-13": "來到施恩的寶座前", "12-16": "更美的祭物和更美的血，同更大、更全備的帳幕",
+  "12-17": "信心的歷史和見證人", "12-18": "奔跑賽程，仰望信心的創始者與成終者",
+  "13-1": "基督徒實行的完全"
+};
+/* 前段核對中頁數未完整的課，目錄上如實標註，不宣稱為完整十頁。 */
+var INCOMPLETE = {"12-7": true, "12-10": true, "12-11": true};
+function lessonTitle(vi, li){
+  return TITLES[vi + "-" + li] || "";
+}
 var volumesEl = document.getElementById('volumes');
 VOLUMES.forEach(function(title, vi){
   var div = document.createElement('div');
@@ -156,7 +173,10 @@ VOLUMES.forEach(function(title, vi){
   for (var li = 1; li <= 18; li++){
     (function(l){
       var b = document.createElement('button');
-      b.textContent = '第' + l + '課';
+      var t = lessonTitle(vi, l);
+      b.innerHTML = '<strong>第' + l + '課</strong><span class="ltitle">' +
+        (t ? t + (INCOMPLETE[vi + "-" + l] ? '（頁數未完整）' : '') : '標題待補') + '</span>';
+      b.dataset.search = (title + ' 第' + l + '課 ' + t).toLowerCase();
       b.onclick = function(){ openLesson(vi, l); };
       lessons.appendChild(b);
     })(li);
@@ -175,7 +195,8 @@ function cardHTML(v, l, p){
 }
 function render(){
   document.getElementById('lessonVolume').textContent = VOLUMES[curV];
-  document.getElementById('lessonTitle').textContent = '第' + curL + '課';
+  var lt = lessonTitle(curV, curL);
+  document.getElementById('lessonTitle').textContent = '第' + curL + '課' + (lt ? '　' + lt : '');
   document.getElementById('lessonSub').textContent = '共十頁 · 翻頁或捲動皆可閱讀';
   document.getElementById('cardBox').innerHTML = cardHTML(curV, curL, curP);
   document.getElementById('pageNo').textContent = curP + ' / 10';
@@ -209,6 +230,23 @@ function openLesson(v, l){
   render(); window.scrollTo(0, 0);
   history.replaceState(null, '', '#v' + (v+1) + '-l' + l);
 }
+document.getElementById('searchInput').addEventListener('input', function(e){
+  var q = e.target.value.trim().toLowerCase();
+  var vols = volumesEl.children;
+  for (var i = 0; i < vols.length; i++){
+    var v = vols[i];
+    if (!q){ v.style.display = ''; continue; }
+    var btns = v.querySelectorAll('.lessons button');
+    var any = false;
+    for (var j = 0; j < btns.length; j++){
+      var show = btns[j].dataset.search.indexOf(q) >= 0;
+      btns[j].style.display = show ? '' : 'none';
+      if (show) any = true;
+    }
+    v.style.display = any ? '' : 'none';
+    if (any) v.classList.add('open');
+  }
+});
 document.getElementById('backBtn').onclick = function(){
   document.getElementById('lessonView').style.display = 'none';
   document.getElementById('catalog').style.display = 'block';
