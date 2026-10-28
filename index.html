@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>奶酪與蜂蜜｜聖經之旅福音選讀</title>
+<meta name="description" content="聖經之旅福音選讀：十五冊，每冊十八課，每課十頁圖卡。">
+<style>
+  :root{
+    --cream:#fdf8ee; --cream2:#f7ecd4; --ink:#3a2a18; --muted:#7a6550;
+    --honey:#b7791f; --honey2:#d9a441; --line:#e8dcc2; --card:#fffdf6;
+    --brown:#5b3f1d;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--cream);color:var(--ink);
+    font-family:"Noto Serif TC","Songti TC","PMingLiU",serif;line-height:1.7}
+  /* 典雅底色：奶油漸層＋淡淡蜂巢光暈，不搶文字 */
+  .hero{
+    background:
+      radial-gradient(520px 260px at 85% 0%, rgba(217,164,65,.28), transparent 70%),
+      radial-gradient(420px 240px at 8% 20%, rgba(247,236,212,.9), transparent 70%),
+      linear-gradient(180deg,#fdf3d7 0%,#fdf8ee 55%,#fdf8ee 100%);
+    border-bottom:1px solid var(--line);text-align:center;
+    padding:56px 20px 36px}
+  .hero small{letter-spacing:.35em;color:var(--honey);font-size:13px}
+  .hero h1{margin:10px 0 6px;font-size:clamp(38px,9vw,64px);line-height:1.2;letter-spacing:.08em}
+  .hero h2{margin:0;font-weight:400;font-size:clamp(17px,4.5vw,24px);color:var(--brown);letter-spacing:.18em}
+  .hero p{margin:14px auto 0;max-width:620px;color:var(--muted);font-size:15px}
+  .wrap{max-width:760px;margin:0 auto;padding:20px 16px 48px}
+  .note{background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:14px 16px;color:var(--muted);font-size:14px}
+  .volume{margin-top:16px;border:1px solid var(--line);border-radius:14px;
+    background:var(--card);overflow:hidden}
+  .volume>button{width:100%;border:0;background:transparent;cursor:pointer;
+    display:flex;justify-content:space-between;align-items:center;gap:12px;
+    padding:16px;text-align:left;font-family:inherit}
+  .volume>button strong{font-size:18px}
+  .volume>button span{color:var(--muted);font-size:13px;white-space:nowrap}
+  .volume>button .chev{color:var(--honey);font-size:20px}
+  .lessons{display:none;padding:0 12px 14px}
+  .volume.open .lessons{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .volume.open .chev{transform:rotate(180deg)}
+  .lessons button{border:1px solid var(--line);background:#fffef9;border-radius:10px;
+    padding:10px 4px;cursor:pointer;font-family:inherit;font-size:15px;color:var(--ink)}
+  .lessons button:hover,.lessons button:focus{border-color:var(--honey2);outline:2px solid rgba(217,164,65,.35)}
+  /* 課程頁 */
+  #lessonView{display:none}
+  .back{border:1px solid var(--line);background:var(--card);border-radius:999px;
+    padding:8px 16px;cursor:pointer;font-family:inherit;font-size:15px}
+  .lessonHead{text-align:center;margin:18px 0 6px}
+  .lessonHead h2{margin:6px 0;font-size:26px}
+  .lessonHead p{margin:0;color:var(--muted)}
+  .modeBar{display:flex;gap:8px;justify-content:center;margin:16px 0}
+  .modeBar button{border:1px solid var(--line);background:var(--card);border-radius:999px;
+    padding:8px 18px;cursor:pointer;font-family:inherit;font-size:15px}
+  .modeBar button.on{background:var(--brown);color:#fff;border-color:var(--brown)}
+  .pager{display:flex;align-items:center;justify-content:center;gap:14px;margin:10px 0}
+  .pager button{width:48px;height:48px;border-radius:50%;border:1px solid var(--line);
+    background:var(--card);font-size:22px;cursor:pointer}
+  .pager button:disabled{opacity:.35;cursor:default}
+  .dots{display:flex;gap:6px;justify-content:center;margin:8px 0 18px;flex-wrap:wrap}
+  .dots i{width:8px;height:8px;border-radius:50%;background:#e0d2b2;cursor:pointer}
+  .dots i.on{background:var(--honey);transform:scale(1.3)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;
+    min-height:420px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:28px 22px;box-shadow:0 6px 24px rgba(91,63,29,.08)}
+  .card .big{font-size:52px;line-height:1;color:var(--honey2)}
+  .card h3{margin:14px 0 4px;font-size:22px}
+  .card p{margin:0;color:var(--muted);font-size:14px}
+  /* 捲動模式：十頁上下排開，翻頁控制隱藏 */
+  body.scrollMode .pager,body.scrollMode .dots{display:none}
+  body.scrollMode #flipCard{display:none}
+  #scrollCards{display:none}
+  body.scrollMode #scrollCards{display:grid;gap:16px}
+  footer{border-top:1px solid var(--line);text-align:center;padding:28px 16px 40px;color:var(--muted)}
+  .social{display:flex;gap:16px;justify-content:center;margin-bottom:12px}
+  .social a{width:48px;height:48px;border-radius:50%;border:1px solid var(--line);
+    background:var(--card);display:flex;align-items:center;justify-content:center;text-decoration:none}
+  .social svg{width:24px;height:24px;fill:var(--brown)}
+  .social a:hover{border-color:var(--honey2)}
+  footer p{margin:4px 0;font-size:13px}
+  @media (max-width:420px){.volume.open .lessons{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+  <header class="hero">
+    <small>福音選讀</small>
+    <h1>奶酪與蜂蜜</h1>
+    <h2>聖經之旅福音選讀</h2>
+    <p>十五冊 · 每冊十八課 · 每課十頁圖卡<br>點開一冊，再點一課，就可以開始讀。</p>
+  </header>
+
+  <main class="wrap">
+    <section id="catalog">
+      <div class="note">目錄：十五冊共 270 課。點冊名展開十八課，點課名進入該課的十頁圖卡。圖卡目前為版式佔位，Canva 圖卡順序確認後會直接換上真圖卡，課的順序與頁數不變。</div>
+      <div id="volumes"></div>
+    </section>
+
+    <section id="lessonView" aria-live="polite">
+      <button class="back" id="backBtn">← 回目錄</button>
+      <div class="lessonHead">
+        <p id="lessonVolume"></p>
+        <h2 id="lessonTitle"></h2>
+        <p id="lessonSub"></p>
+      </div>
+      <div class="modeBar" role="group" aria-label="圖卡呈現方式">
+        <button id="flipBtn" class="on">翻頁</button>
+        <button id="scrollBtn">捲動</button>
+      </div>
+      <div id="flipCard">
+        <div class="card" id="cardBox"></div>
+        <div class="pager">
+          <button id="prevBtn" aria-label="上一頁">‹</button>
+          <span id="pageNo"></span>
+          <button id="nextBtn" aria-label="下一頁">›</button>
+        </div>
+        <div class="dots" id="dots"></div>
+      </div>
+      <div id="scrollCards"></div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="social">
+      <a href="https://www.facebook.com/share/1DqHUpfJ7D/" target="_blank" rel="noopener" aria-label="Facebook">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 21v-7h2.4l.4-3h-2.8V9.1c0-.9.3-1.5 1.6-1.5h1.3V4.9c-.3 0-1.1-.1-2.1-.1-2.1 0-3.6 1.3-3.6 3.7V11H8.3v3h2.4v7h2.8z"/></svg>
+      </a>
+      <a href="https://www.instagram.com/tc_yp" target="_blank" rel="noopener" aria-label="Instagram tc_yp">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8.8A3.2 3.2 0 1 0 12 15.2 3.2 3.2 0 0 0 12 8.8zm0-2.1a5.3 5.3 0 1 1 0 10.6 5.3 5.3 0 0 1 0-10.6zm6.8-.3a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0zM12 4.2c-2.5 0-2.8 0-3.8.1-2.6.1-3.8 1.3-3.9 3.9 0 1 0 1.3 0 3.8s0 2.8.1 3.8c.1 2.6 1.3 3.8 3.9 3.9 1 0 1.3.1 3.8.1s2.8 0 3.8-.1c2.6-.1 3.8-1.3 3.9-3.9 0-1 0-1.3 0-3.8s0-2.8-.1-3.8c-.1-2.6-1.3-3.8-3.9-3.9-1 0-1.3-.1-3.8-.1z"/></svg>
+      </a>
+      <a href="https://www.instagram.com/tcyp.honeymilk" target="_blank" rel="noopener" aria-label="Instagram tcyp.honeymilk">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8.8A3.2 3.2 0 1 0 12 15.2 3.2 3.2 0 0 0 12 8.8zm0-2.1a5.3 5.3 0 1 1 0 10.6 5.3 5.3 0 0 1 0-10.6zm6.8-.3a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0zM12 4.2c-2.5 0-2.8 0-3.8.1-2.6.1-3.8 1.3-3.9 3.9 0 1 0 1.3 0 3.8s0 2.8.1 3.8c.1 2.6 1.3 3.8 3.9 3.9 1 0 1.3.1 3.8.1s2.8 0 3.8-.1c2.6-.1 3.8-1.3 3.9-3.9 0-1 0-1.3 0-3.8s0-2.8-.1-3.8c-.1-2.6-1.3-3.8-3.9-3.9-1 0-1.3-.1-3.8-.1z"/></svg>
+      </a>
+    </div>
+    <p>奶酪與蜂蜜 · 聖經之旅福音選讀</p>
+    <p>Facebook · Instagram @tc_yp · Instagram @tcyp.honeymilk</p>
+  </footer>
+
+<script>
+var VOLUMES = [
+  "第一冊　蒙揀選的族類","第二冊　神聖別的子民","第三冊　據有享受美地",
+  "第四冊　建立神的國度","第五冊　殿與城的恢復","第六冊　愛、生命與建造",
+  "第七冊　有一嬰孩為我們而生","第八冊　往榮耀裡去的路徑","第九冊　一粒麥子的繁殖與擴增",
+  "第十冊　滿有榮光與卓越的職事","第十一冊　啟示的基督，建造的召會","第十二冊　至寶的基督，榮耀的盼望",
+  "第十三冊　敬虔的奧祕　更美的新約","第十四冊　神聖的供備　生命的交通","第十五冊　終極的顯出－新耶路撒冷"
+];
+var volumesEl = document.getElementById('volumes');
+VOLUMES.forEach(function(title, vi){
+  var div = document.createElement('div');
+  div.className = 'volume';
+  var btn = document.createElement('button');
+  btn.innerHTML = '<strong>' + title + '</strong><span>十八課 <span class="chev">▾</span></span>';
+  btn.setAttribute('aria-expanded','false');
+  var lessons = document.createElement('div');
+  lessons.className = 'lessons';
+  for (var li = 1; li <= 18; li++){
+    (function(l){
+      var b = document.createElement('button');
+      b.textContent = '第' + l + '課';
+      b.onclick = function(){ openLesson(vi, l); };
+      lessons.appendChild(b);
+    })(li);
+  }
+  btn.onclick = function(){
+    var open = div.classList.toggle('open');
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  };
+  div.appendChild(btn); div.appendChild(lessons); volumesEl.appendChild(div);
+});
+
+var curV = 0, curL = 1, curP = 1, mode = 'flip';
+function cardHTML(v, l, p){
+  return '<div class="big">✦</div><h3>第' + p + '頁</h3>' +
+    '<p>' + VOLUMES[v] + ' · 第' + l + '課<br>圖卡待置入（Canva 順序確認後換上）</p>';
+}
+function render(){
+  document.getElementById('lessonVolume').textContent = VOLUMES[curV];
+  document.getElementById('lessonTitle').textContent = '第' + curL + '課';
+  document.getElementById('lessonSub').textContent = '共十頁 · 翻頁或捲動皆可閱讀';
+  document.getElementById('cardBox').innerHTML = cardHTML(curV, curL, curP);
+  document.getElementById('pageNo').textContent = curP + ' / 10';
+  document.getElementById('prevBtn').disabled = curP <= 1;
+  document.getElementById('nextBtn').disabled = curP >= 10;
+  var dots = document.getElementById('dots'); dots.innerHTML = '';
+  for (var i = 1; i <= 10; i++){
+    (function(p){
+      var d = document.createElement('i');
+      if (p === curP) d.className = 'on';
+      d.onclick = function(){ curP = p; render(); };
+      dots.appendChild(d);
+    })(i);
+  }
+  var sc = document.getElementById('scrollCards'); sc.innerHTML = '';
+  for (var j = 1; j <= 10; j++){
+    var c = document.createElement('div'); c.className = 'card';
+    c.innerHTML = cardHTML(curV, curL, j); sc.appendChild(c);
+  }
+}
+function setMode(m){
+  mode = m;
+  document.body.classList.toggle('scrollMode', m === 'scroll');
+  document.getElementById('flipBtn').className = m === 'flip' ? 'on' : '';
+  document.getElementById('scrollBtn').className = m === 'scroll' ? 'on' : '';
+}
+function openLesson(v, l){
+  curV = v; curL = l; curP = 1; setMode('flip');
+  document.getElementById('catalog').style.display = 'none';
+  document.getElementById('lessonView').style.display = 'block';
+  render(); window.scrollTo(0, 0);
+  history.replaceState(null, '', '#v' + (v+1) + '-l' + l);
+}
+document.getElementById('backBtn').onclick = function(){
+  document.getElementById('lessonView').style.display = 'none';
+  document.getElementById('catalog').style.display = 'block';
+  history.replaceState(null, '', '#'); window.scrollTo(0, 0);
+};
+document.getElementById('prevBtn').onclick = function(){ if (curP > 1){ curP--; render(); } };
+document.getElementById('nextBtn').onclick = function(){ if (curP < 10){ curP++; render(); } };
+document.getElementById('flipBtn').onclick = function(){ setMode('flip'); };
+document.getElementById('scrollBtn').onclick = function(){ setMode('scroll'); };
+document.addEventListener('keydown', function(e){
+  if (document.getElementById('lessonView').style.display !== 'block' || mode !== 'flip') return;
+  if (e.key === 'ArrowLeft' && curP > 1){ curP--; render(); }
+  if (e.key === 'ArrowRight' && curP < 10){ curP++; render(); }
+});
+var tx = 0;
+document.getElementById('flipCard').addEventListener('touchstart', function(e){ tx = e.changedTouches[0].clientX; }, {passive:true});
+document.getElementById('flipCard').addEventListener('touchend', function(e){
+  if (mode !== 'flip') return;
+  var dx = e.changedTouches[0].clientX - tx;
+  if (dx < -40 && curP < 10){ curP++; render(); }
+  if (dx > 40 && curP > 1){ curP--; render(); }
+}, {passive:true});
+</script>
+</body>
+</html>
