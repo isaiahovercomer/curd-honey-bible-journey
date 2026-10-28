@@ -121,7 +121,7 @@
 
   <main class="wrap">
     <section id="catalog">
-      <div class="note">目錄：十五冊共 270 課。點冊名展開十八課，點課名進入該課的十頁圖卡。兩連結全部 502 頁已核對完，去重後 33 課已顯示課名，其餘課名在兩連結中未出現，暫顯示「標題待補」；上方搜尋框可直接找冊名或課名。圖卡目前為版式佔位，Canva 圖卡順序確認後會直接換上真圖卡，課的順序與頁數不變。</div>
+      <div class="note">目錄：十五冊共 270 課。點冊名展開十八課，點課名進入該課的十頁圖卡。兩連結全部 502 頁已核對完，去重後 33 課已顯示課名，其餘課名在兩連結中未出現，暫顯示「標題待補」；各冊色調參考台灣福音書房封面主色（未使用封面圖）；上方搜尋框可直接找冊名或課名。圖卡目前為版式佔位，Canva 圖卡順序確認後會直接換上真圖卡，課的順序與頁數不變。</div>
       <input class="search" id="searchInput" type="search" placeholder="搜尋冊名、課名，例如：召會、基督、施恩…" aria-label="搜尋目錄">
       <div id="volumes"></div>
     </section>
@@ -198,13 +198,13 @@ var TWO_VERSIONS = {"12-9": true};
 function lessonTitle(vi, li){
   return TITLES[vi + "-" + li] || "";
 }
-/* 十五冊各自的色調（主題相關的柔和色系，非複製書封圖案；每冊左邊色條與標題色皆不同） */
+/* 十五冊各自的色調（參考台灣福音書房封面主色，僅取色調，未使用封面圖案；每冊左邊色條與標題色皆不同） */
 var VOLUME_COLORS = [
-  {a:"#5a7d4f", l:"#eaf2e6"}, {a:"#9a6b2f", l:"#f7ecd8"}, {a:"#7a8a3a", l:"#eef2dd"},
-  {a:"#6b5a8a", l:"#edeaf4"}, {a:"#4f7a8a", l:"#e4eef2"}, {a:"#a67c88", l:"#f5e9ec"},
-  {a:"#4a7fb5", l:"#e3edf7"}, {a:"#b7791f", l:"#f9ecd0"}, {a:"#8a7a2a", l:"#f3eed6"},
-  {a:"#a85a4e", l:"#f6e6e2"}, {a:"#357a78", l:"#e2efee"}, {a:"#6f6a9e", l:"#e9e7f2"},
-  {a:"#2f6da3", l:"#e2edf6"}, {a:"#5f7d5f", l:"#e6efe6"}, {a:"#b08a3e", l:"#f6ecd4"}
+  {a:"#2f6da3", l:"#e2edf6"}, {a:"#7a7a9a", l:"#ececf2"}, {a:"#6a8a2f", l:"#eef2dd"},
+  {a:"#8a6d3b", l:"#f3ead8"}, {a:"#a8874a", l:"#f5ecd6"}, {a:"#b06a7e", l:"#f7e6eb"},
+  {a:"#5a7a9a", l:"#e4ecf2"}, {a:"#9a8a6a", l:"#f2ecdd"}, {a:"#7a9a2a", l:"#eef3dd"},
+  {a:"#9a5a3e", l:"#f6e6dd"}, {a:"#3a7a5a", l:"#e4f0e8"}, {a:"#7aa0c0", l:"#e8f0f7"},
+  {a:"#4a8a6a", l:"#e2f0ea"}, {a:"#2f8ac0", l:"#e0f0f8"}, {a:"#2f7a4f", l:"#e2f2e6"}
 ];
 var volumesEl = document.getElementById('volumes');
 VOLUMES.forEach(function(title, vi){
