@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>奶酪與蜂蜜｜聖經之旅福音選讀</title>
 <meta name="description" content="聖經之旅福音選讀：十五冊，每冊十八課，每課十頁圖卡。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@700;900&display=swap" rel="stylesheet">
 <style>
   :root{
     --cream:#fdf8ee; --cream2:#f7ecd4; --ink:#3a2a18; --muted:#7a6550;
@@ -23,14 +25,26 @@
     border-bottom:1px solid var(--line);text-align:center;
     padding:56px 20px 36px}
   .hero small{letter-spacing:.35em;color:var(--honey);font-size:13px}
-  .hero h1{margin:10px 0 6px;font-size:clamp(38px,9vw,64px);line-height:1.2;letter-spacing:.08em}
-  .hero h2{margin:0;font-weight:400;font-size:clamp(17px,4.5vw,24px);color:var(--brown);letter-spacing:.18em}
+  .heroArt{width:180px;height:86px;margin:0 auto 2px}
+  .hero h1{margin:6px 0 14px;font-family:"Noto Sans TC","Noto Serif TC",serif;font-weight:900;
+    font-size:clamp(46px,12vw,78px);line-height:1.15;letter-spacing:.04em}
+  .hero h1 .tchar{display:inline-block;text-shadow:0 3px 0 #fff,0 6px 14px rgba(91,63,29,.18)}
+  .hero h1 .tchar:nth-child(1){color:#e8a020;transform:rotate(-4deg)}
+  .hero h1 .tchar:nth-child(2){color:#d97b29;transform:rotate(3deg) translateY(3px)}
+  .hero h1 .tchar:nth-child(3){color:#b7791f;transform:rotate(-2deg)}
+  .hero h1 .tchar:nth-child(4){color:#f2b705;transform:rotate(4deg) translateY(2px)}
+  .hero h1 .tchar:nth-child(5){color:#c98a2e;transform:rotate(-3deg)}
+  .hero h2{display:inline-block;margin:0;background:#fff3d6;border:2px solid var(--honey2);
+    border-radius:999px;padding:10px 24px;font-family:"Noto Sans TC",serif;font-weight:700;
+    font-size:clamp(21px,5.5vw,30px);color:var(--brown);letter-spacing:.12em;
+    box-shadow:0 4px 14px rgba(183,121,31,.18)}
   .hero p{margin:14px auto 0;max-width:620px;color:var(--muted);font-size:15px}
   .wrap{max-width:760px;margin:0 auto;padding:20px 16px 48px}
   .note{background:var(--card);border:1px solid var(--line);border-radius:14px;
     padding:14px 16px;color:var(--muted);font-size:14px}
-  .volume{margin-top:16px;border:1px solid var(--line);border-radius:14px;
-    background:var(--card);overflow:hidden}
+  .volume{margin-top:16px;border:1px solid var(--line);border-left:7px solid var(--vacc,#e8dcc2);border-radius:14px;
+    background:var(--vlight,#fffdf6);overflow:hidden}
+  .volume>button strong{color:var(--vacc,#3a2a18)}
   .volume>button{width:100%;border:0;background:transparent;cursor:pointer;
     display:flex;justify-content:space-between;align-items:center;gap:12px;
     padding:16px;text-align:left;font-family:inherit}
@@ -88,7 +102,19 @@
 <body>
   <header class="hero">
     <small>福音選讀</small>
-    <h1>奶酪與蜂蜜</h1>
+    <!-- 原創卡通插畫：左為帶孔的奶酪塊，右為滴著蜜的蜜罐與小蜜蜂，非書房封面複製 -->
+    <svg class="heroArt" viewBox="0 0 180 86" aria-hidden="true">
+      <path d="M8 62 L62 18 L62 62 Z" fill="#f7c948" stroke="#e8a020" stroke-width="3" stroke-linejoin="round"/>
+      <circle cx="34" cy="50" r="6" fill="#e8a020"/><circle cx="48" cy="38" r="4" fill="#e8a020"/><circle cx="26" cy="38" r="3" fill="#e8a020"/>
+      <path d="M96 30 h52 v6 q0 26 -26 26 q-26 0 -26 -26 Z" fill="#d9a441" stroke="#b7791f" stroke-width="3"/>
+      <ellipse cx="122" cy="30" rx="26" ry="7" fill="#f7c948" stroke="#b7791f" stroke-width="3"/>
+      <path d="M122 37 q4 10 0 18 q-4 -8 0 -18" fill="#f2b705"/>
+      <path d="M138 14 L162 34" stroke="#8a5a1f" stroke-width="5" stroke-linecap="round"/>
+      <ellipse cx="156" cy="20" rx="10" ry="6" fill="#f7c948" stroke="#b7791f" stroke-width="2" transform="rotate(-32 156 20)"/>
+      <g><ellipse cx="148" cy="52" rx="9" ry="5" fill="#fff" opacity=".8"/><ellipse cx="164" cy="52" rx="9" ry="5" fill="#fff" opacity=".8"/>
+      <circle cx="156" cy="60" r="8" fill="#f2b705" stroke="#b7791f" stroke-width="2"/><path d="M152 56 h8 M152 62 h8" stroke="#5b3f1d" stroke-width="2"/></g>
+    </svg>
+    <h1><span class="tchar">奶</span><span class="tchar">酪</span><span class="tchar">與</span><span class="tchar">蜂</span><span class="tchar">蜜</span></h1>
     <h2>聖經之旅福音選讀</h2>
     <p>十五冊 · 每冊十八課 · 每課十頁圖卡<br>點開一冊，再點一課，就可以開始讀。</p>
   </header>
@@ -161,10 +187,20 @@ var INCOMPLETE = {"12-7": true, "12-10": true, "12-11": true};
 function lessonTitle(vi, li){
   return TITLES[vi + "-" + li] || "";
 }
+/* 十五冊各自的色調（主題相關的柔和色系，非複製書封圖案；每冊左邊色條與標題色皆不同） */
+var VOLUME_COLORS = [
+  {a:"#5a7d4f", l:"#eaf2e6"}, {a:"#9a6b2f", l:"#f7ecd8"}, {a:"#7a8a3a", l:"#eef2dd"},
+  {a:"#6b5a8a", l:"#edeaf4"}, {a:"#4f7a8a", l:"#e4eef2"}, {a:"#a67c88", l:"#f5e9ec"},
+  {a:"#4a7fb5", l:"#e3edf7"}, {a:"#b7791f", l:"#f9ecd0"}, {a:"#8a7a2a", l:"#f3eed6"},
+  {a:"#a85a4e", l:"#f6e6e2"}, {a:"#357a78", l:"#e2efee"}, {a:"#6f6a9e", l:"#e9e7f2"},
+  {a:"#2f6da3", l:"#e2edf6"}, {a:"#5f7d5f", l:"#e6efe6"}, {a:"#b08a3e", l:"#f6ecd4"}
+];
 var volumesEl = document.getElementById('volumes');
 VOLUMES.forEach(function(title, vi){
   var div = document.createElement('div');
   div.className = 'volume';
+  div.style.setProperty('--vacc', VOLUME_COLORS[vi].a);
+  div.style.setProperty('--vlight', VOLUME_COLORS[vi].l);
   var btn = document.createElement('button');
   btn.innerHTML = '<strong>' + title + '</strong><span>十八課 <span class="chev">▾</span></span>';
   btn.setAttribute('aria-expanded','false');
