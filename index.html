@@ -67,6 +67,10 @@
   .lessonHead{text-align:center;margin:18px 0 6px}
   .lessonHead h2{margin:6px 0;font-size:26px}
   .lessonHead p{margin:0;color:var(--muted)}
+  .canvaLink{margin-top:14px}
+  .canvaLink a{display:inline-block;background:var(--brown);color:#fff;text-decoration:none;
+    border-radius:999px;padding:10px 22px;font-size:15px;box-shadow:0 4px 14px rgba(91,63,29,.25)}
+  .canvaLink p{margin:8px 0 0;font-size:13px}
   .modeBar{display:flex;gap:8px;justify-content:center;margin:16px 0}
   .modeBar button{border:1px solid var(--line);background:var(--card);border-radius:999px;
     padding:8px 18px;cursor:pointer;font-family:inherit;font-size:15px}
@@ -121,7 +125,7 @@
 
   <main class="wrap">
     <section id="catalog">
-      <div class="note">目錄：十五冊共 270 課。點冊名展開十八課，點課名進入該課的十頁圖卡。兩連結全部 502 頁已核對完，去重後 33 課已顯示課名，其餘課名在兩連結中未出現，暫顯示「標題待補」；各冊色調參考台灣福音書房封面主色（未使用封面圖）；上方搜尋框可直接找冊名或課名。圖卡目前為版式佔位，Canva 圖卡順序確認後會直接換上真圖卡，課的順序與頁數不變。</div>
+      <div class="note">目錄：十五冊共 270 課。點冊名展開十八課，點課名進入該課的十頁圖卡。兩連結全部 502 頁已核對完，去重後 33 課已顯示課名，其餘課名在兩連結中未出現，暫顯示「標題待補」；各冊色調參考台灣福音書房封面主色（未使用封面圖）；上方搜尋框可直接找冊名或課名。圖卡目前為版式佔位，Canva 圖卡順序確認後會直接換上真圖卡，課的順序與頁數不變；第十三冊第 9 課已採用第二個版本，進該課頁面有 Canva 連結。</div>
       <input class="search" id="searchInput" type="search" placeholder="搜尋冊名、課名，例如：召會、基督、施恩…" aria-label="搜尋目錄">
       <div id="volumes"></div>
     </section>
@@ -132,6 +136,7 @@
         <p id="lessonVolume"></p>
         <h2 id="lessonTitle"></h2>
         <p id="lessonSub"></p>
+        <div class="canvaLink" id="canvaLink" style="display:none"></div>
       </div>
       <div class="modeBar" role="group" aria-label="圖卡呈現方式">
         <button id="flipBtn" class="on">翻頁</button>
@@ -174,7 +179,7 @@ var VOLUMES = [
   "第十冊　滿有榮光與卓越的職事","第十一冊　啟示的基督，建造的召會","第十二冊　至寶的基督，榮耀的盼望",
   "第十三冊　敬虔的奧祕　更美的新約","第十四冊　神聖的供備　生命的交通","第十五冊　終極的顯出－新耶路撒冷"
 ];
-/* 已核對範圍的課名（Canva 前段核對結果）；其餘課名待後段核對後補上。鍵為「冊序-課號」，冊序從 0 起算。 */
+/* 完整去重後的 33 課課名（Canva 兩連結共 502 頁核對完）；其餘課名在兩連結中未出現。鍵為「冊序-課號」，冊序從 0 起算。 */
 var TITLES = {
   "10-15": "基督生機身體內在的建造", "10-17": "極大的奧秘－基督與召會",
   "11-1": "推廣福音的交通", "11-3": "以基督為我們的榜樣", "11-5": "以基督為至寶 為我們的義",
@@ -193,8 +198,8 @@ var TITLES = {
 };
 /* 完整核對中頁數未完整的課，目錄上如實標註，不宣稱為完整十頁。 */
 var INCOMPLETE = {"10-17": true};
-/* 同課有兩個完整版本的課，目錄上如實標註。 */
-var TWO_VERSIONS = {"12-9": true};
+/* 已選用 Canva 版本的課：第十三冊第 9 課採用第二個版本（第二份 Canva 連結第 197–206 頁）。 */
+var CANVA_LINKS = {"12-9": {url: "https://canva.link/m6da8x01ixyhxlq", label: "在 Canva 看這課圖卡（第二個版本）", note: "連結會從設計開頭打開，請翻到第 197–206 頁，就是這一課的 10 頁圖卡。"}};
 function lessonTitle(vi, li){
   return TITLES[vi + "-" + li] || "";
 }
@@ -222,7 +227,7 @@ VOLUMES.forEach(function(title, vi){
       var b = document.createElement('button');
       var t = lessonTitle(vi, l);
       b.innerHTML = '<strong>第' + l + '課</strong><span class="ltitle">' +
-        (t ? t + (INCOMPLETE[vi + "-" + l] ? '（頁數未完整）' : '') + (TWO_VERSIONS[vi + "-" + l] ? '（兩個版本）' : '') : '標題待補') + '</span>';
+        (t ? t + (INCOMPLETE[vi + "-" + l] ? '（頁數未完整）' : '') : '標題待補') + '</span>';
       b.dataset.search = (title + ' 第' + l + '課 ' + t).toLowerCase();
       b.onclick = function(){ openLesson(vi, l); };
       lessons.appendChild(b);
@@ -245,6 +250,14 @@ function render(){
   var lt = lessonTitle(curV, curL);
   document.getElementById('lessonTitle').textContent = '第' + curL + '課' + (lt ? '　' + lt : '');
   document.getElementById('lessonSub').textContent = '共十頁 · 翻頁或捲動皆可閱讀';
+  var cl = document.getElementById('canvaLink');
+  var cv = CANVA_LINKS[curV + "-" + curL];
+  if (cv){
+    cl.style.display = 'block';
+    cl.innerHTML = '<a href="' + cv.url + '" target="_blank" rel="noopener">' + cv.label + '</a><p>' + cv.note + '</p>';
+  } else {
+    cl.style.display = 'none'; cl.innerHTML = '';
+  }
   document.getElementById('cardBox').innerHTML = cardHTML(curV, curL, curP);
   document.getElementById('pageNo').textContent = curP + ' / 10';
   document.getElementById('prevBtn').disabled = curP <= 1;
