@@ -88,7 +88,10 @@
   .card .big{font-size:52px;line-height:1;color:var(--honey2)}
   .card h3{margin:14px 0 4px;font-size:22px}
   .card p{margin:0;color:var(--muted);font-size:14px}
-  /* 捲動模式：十頁上下排開，翻頁控制隱藏 */
+  /* 真圖卡貼齊卡片，佔位卡的留白與字級不變 */
+  .card.hasImg{padding:0;min-height:0;overflow:hidden}
+  .cardImg{width:100%;height:auto;display:block}
+  /* 捲動模式：各頁上下排開，翻頁控制隱藏 */
   body.scrollMode .pager,body.scrollMode .dots{display:none}
   body.scrollMode #flipCard{display:none}
   #scrollCards{display:none}
@@ -125,7 +128,7 @@
 
   <main class="wrap">
     <section id="catalog">
-      <div class="note">目錄：十五冊共 270 課。點冊名展開十八課，點課名進入該課的十頁圖卡。兩連結全部 502 頁已核對完，去重後 33 課已顯示課名，其餘課名在兩連結中未出現，暫顯示「標題待補」；各冊色調參考台灣福音書房封面主色（未使用封面圖）；上方搜尋框可直接找冊名或課名。圖卡目前為版式佔位，Canva 圖卡順序確認後會直接換上真圖卡，課的順序與頁數不變；第十三冊第 9 課已採用第二個版本，進該課頁面有 Canva 連結。</div>
+      <div class="note">目錄：十五冊共 270 課。點冊名展開十八課，點課名進入該課圖卡。兩連結全部 502 頁已核對完，去重後 33 課已顯示課名，其餘課名在兩連結中未出現，暫顯示「標題待補」；各冊色調參考台灣福音書房封面主色（未使用封面圖）；上方搜尋框可直接找冊名或課名。第二份 Canva 已對上的課，依頁序顯示真圖卡；頁數少於十頁的，目錄標「頁數未完整」，只顯示現有的頁，不補假頁。尚未對上圖卡的課仍是十頁版式佔位。第十三冊第 9 課採用第二個版本，進該課頁面有 Canva 連結。</div>
       <input class="search" id="searchInput" type="search" placeholder="搜尋冊名、課名，例如：召會、基督、施恩…" aria-label="搜尋目錄">
       <div id="volumes"></div>
     </section>
@@ -196,8 +199,24 @@ var TITLES = {
   "12-17": "信心的歷史和見證人", "12-18": "奔跑賽程，仰望信心的創始者與成終者",
   "13-1": "基督徒實行的完全"
 };
-/* 完整核對中頁數未完整的課，目錄上如實標註，不宣稱為完整十頁。 */
-var INCOMPLETE = {"10-17": true};
+/* 頁數少於十頁的課，目錄上如實標註，不宣稱為完整十頁；有真圖卡者只顯示現有頁。 */
+var INCOMPLETE = {
+  "10-17": true, "11-17": true, "11-18": true,
+  "12-7": true, "12-10": true, "12-17": true
+};
+/* 第二份 Canva 已對上的課：實際頁數。圖檔在 cards/冊序-課號/01.png 起，依頁序。
+   未列入：設計第 116–120 頁（課號寫第十二冊第14課、課名卻是「一切影兒的實體」）；
+   設計第 82–87 頁（課號寫第十三冊第2課、課名卻是第1課的「為着召會生活之聖別生活的結構與起源」）。 */
+var CARD_COUNTS = {
+  "10-17": 6,
+  "11-1": 10, "11-3": 10, "11-5": 10, "11-7": 10, "11-9": 10,
+  "11-11": 10, "11-13": 10, "11-15": 10, "11-17": 7, "11-18": 1,
+  "12-1": 10, "12-3": 10, "12-6": 10, "12-7": 7, "12-8": 10, "12-9": 10,
+  "12-10": 5, "12-14": 10, "12-15": 10, "12-17": 9, "12-18": 10
+};
+function pageCount(v, l){
+  return CARD_COUNTS[v + "-" + l] || 10;
+}
 /* 已選用 Canva 版本的課：第十三冊第 9 課採用第二個版本（第二份 Canva 連結第 197–206 頁）。 */
 var CANVA_LINKS = {"12-9": {url: "https://canva.link/m6da8x01ixyhxlq", label: "在 Canva 看這課圖卡（第二個版本）", note: "連結會從設計開頭打開，請翻到第 197–206 頁，就是這一課的 10 頁圖卡。"}};
 function lessonTitle(vi, li){
@@ -241,29 +260,43 @@ VOLUMES.forEach(function(title, vi){
 });
 
 var curV = 0, curL = 1, curP = 1, mode = 'flip';
+var CN_PAGE = ['','一','二','三','四','五','六','七','八','九','十'];
 function cardHTML(v, l, p){
+  var key = v + '-' + l;
+  if (CARD_COUNTS[key]){
+    var file = (p < 10 ? '0' : '') + p + '.png';
+    var lt = lessonTitle(v, l);
+    var alt = VOLUMES[v] + ' 第' + l + '課' + (lt ? ' ' + lt : '') + ' 第' + p + '頁';
+    return '<img class="cardImg" src="cards/' + key + '/' + file + '" alt="' + alt + '" width="447" height="447">';
+  }
   return '<div class="big">✦</div><h3>第' + p + '頁</h3>' +
     '<p>' + VOLUMES[v] + ' · 第' + l + '課<br>圖卡待置入（Canva 順序確認後換上）</p>';
 }
 function render(){
+  var total = pageCount(curV, curL);
+  if (curP > total) curP = total;
+  var key = curV + '-' + curL;
   document.getElementById('lessonVolume').textContent = VOLUMES[curV];
   var lt = lessonTitle(curV, curL);
   document.getElementById('lessonTitle').textContent = '第' + curL + '課' + (lt ? '　' + lt : '');
-  document.getElementById('lessonSub').textContent = '共十頁 · 翻頁或捲動皆可閱讀';
+  document.getElementById('lessonSub').textContent = '共' + (CN_PAGE[total] || total) + '頁' +
+    (INCOMPLETE[key] ? '（頁數未完整）' : '') + ' · 翻頁或捲動皆可閱讀';
   var cl = document.getElementById('canvaLink');
-  var cv = CANVA_LINKS[curV + "-" + curL];
+  var cv = CANVA_LINKS[key];
   if (cv){
     cl.style.display = 'block';
     cl.innerHTML = '<a href="' + cv.url + '" target="_blank" rel="noopener">' + cv.label + '</a><p>' + cv.note + '</p>';
   } else {
     cl.style.display = 'none'; cl.innerHTML = '';
   }
-  document.getElementById('cardBox').innerHTML = cardHTML(curV, curL, curP);
-  document.getElementById('pageNo').textContent = curP + ' / 10';
+  var box = document.getElementById('cardBox');
+  box.className = 'card' + (CARD_COUNTS[key] ? ' hasImg' : '');
+  box.innerHTML = cardHTML(curV, curL, curP);
+  document.getElementById('pageNo').textContent = curP + ' / ' + total;
   document.getElementById('prevBtn').disabled = curP <= 1;
-  document.getElementById('nextBtn').disabled = curP >= 10;
+  document.getElementById('nextBtn').disabled = curP >= total;
   var dots = document.getElementById('dots'); dots.innerHTML = '';
-  for (var i = 1; i <= 10; i++){
+  for (var i = 1; i <= total; i++){
     (function(p){
       var d = document.createElement('i');
       if (p === curP) d.className = 'on';
@@ -272,8 +305,9 @@ function render(){
     })(i);
   }
   var sc = document.getElementById('scrollCards'); sc.innerHTML = '';
-  for (var j = 1; j <= 10; j++){
-    var c = document.createElement('div'); c.className = 'card';
+  for (var j = 1; j <= total; j++){
+    var c = document.createElement('div');
+    c.className = 'card' + (CARD_COUNTS[key] ? ' hasImg' : '');
     c.innerHTML = cardHTML(curV, curL, j); sc.appendChild(c);
   }
 }
@@ -313,20 +347,20 @@ document.getElementById('backBtn').onclick = function(){
   history.replaceState(null, '', '#'); window.scrollTo(0, 0);
 };
 document.getElementById('prevBtn').onclick = function(){ if (curP > 1){ curP--; render(); } };
-document.getElementById('nextBtn').onclick = function(){ if (curP < 10){ curP++; render(); } };
+document.getElementById('nextBtn').onclick = function(){ if (curP < pageCount(curV, curL)){ curP++; render(); } };
 document.getElementById('flipBtn').onclick = function(){ setMode('flip'); };
 document.getElementById('scrollBtn').onclick = function(){ setMode('scroll'); };
 document.addEventListener('keydown', function(e){
   if (document.getElementById('lessonView').style.display !== 'block' || mode !== 'flip') return;
   if (e.key === 'ArrowLeft' && curP > 1){ curP--; render(); }
-  if (e.key === 'ArrowRight' && curP < 10){ curP++; render(); }
+  if (e.key === 'ArrowRight' && curP < pageCount(curV, curL)){ curP++; render(); }
 });
 var tx = 0;
 document.getElementById('flipCard').addEventListener('touchstart', function(e){ tx = e.changedTouches[0].clientX; }, {passive:true});
 document.getElementById('flipCard').addEventListener('touchend', function(e){
   if (mode !== 'flip') return;
   var dx = e.changedTouches[0].clientX - tx;
-  if (dx < -40 && curP < 10){ curP++; render(); }
+  if (dx < -40 && curP < pageCount(curV, curL)){ curP++; render(); }
   if (dx > 40 && curP > 1){ curP--; render(); }
 }, {passive:true});
 </script>
