@@ -88,7 +88,10 @@
   .card .big{font-size:52px;line-height:1;color:var(--honey2)}
   .card h3{margin:14px 0 4px;font-size:22px}
   .card p{margin:0;color:var(--muted);font-size:14px}
-  /* 捲動模式：十頁上下排開，翻頁控制隱藏 */
+  /* 真圖卡貼齊卡片，佔位卡的留白與字級不變 */
+  .card.hasImg{padding:0;min-height:0;overflow:hidden}
+  .cardImg{width:100%;height:auto;display:block;aspect-ratio:1/1}
+  /* 捲動模式：各頁上下排開，翻頁控制隱藏 */
   body.scrollMode .pager,body.scrollMode .dots{display:none}
   body.scrollMode #flipCard{display:none}
   #scrollCards{display:none}
@@ -125,7 +128,7 @@
 
   <main class="wrap">
     <section id="catalog">
-      <div class="note">目錄：十五冊共 270 課。點冊名展開十八課，點課名進入該課的十頁圖卡。兩連結全部 502 頁已核對完，去重後 33 課已顯示課名，其餘課名在兩連結中未出現，暫顯示「標題待補」；各冊色調參考台灣福音書房封面主色（未使用封面圖）；上方搜尋框可直接找冊名或課名。圖卡目前為版式佔位，Canva 圖卡順序確認後會直接換上真圖卡，課的順序與頁數不變；第十三冊第 9 課已採用第二個版本，進該課頁面有 Canva 連結。</div>
+      <div class="note">目錄：十五冊共 270 課。點冊名展開十八課，點課名進入該課圖卡。各冊色調參考台灣福音書房封面主色（未使用封面圖）；上方搜尋框可直接找冊名或課名。Instagram @tcyp.honeymilk 已貼出的課，依輪播順序顯示完整真圖卡；其餘已對上第二份 Canva 的課，也依頁序顯示真圖卡。頁數少於十頁的，目錄標「頁數未完整」，只顯示現有的頁，不補假頁。還沒有圖卡的課仍是十頁版式佔位，課名尚未出現的仍顯示「標題待補」。第十三冊第 9 課採用第二個 Canva 版本，進該課頁面有 Canva 連結。</div>
       <input class="search" id="searchInput" type="search" placeholder="搜尋冊名、課名，例如：召會、基督、施恩…" aria-label="搜尋目錄">
       <div id="volumes"></div>
     </section>
@@ -179,25 +182,166 @@ var VOLUMES = [
   "第十冊　滿有榮光與卓越的職事","第十一冊　啟示的基督，建造的召會","第十二冊　至寶的基督，榮耀的盼望",
   "第十三冊　敬虔的奧祕　更美的新約","第十四冊　神聖的供備　生命的交通","第十五冊　終極的顯出－新耶路撒冷"
 ];
-/* 完整去重後的 33 課課名（Canva 兩連結共 502 頁核對完）；其餘課名在兩連結中未出現。鍵為「冊序-課號」，冊序從 0 起算。 */
+/* 課名。鍵為「冊序-課號」，冊序從 0 起算。早先兩份 Canva 對過的課名保留原字；Instagram 圖卡首頁新印出、目錄還沒有的題目，依標題卡補上。 */
 var TITLES = {
-  "10-15": "基督生機身體內在的建造", "10-17": "極大的奧秘－基督與召會",
-  "11-1": "推廣福音的交通", "11-3": "以基督為我們的榜樣", "11-5": "以基督為至寶 為我們的義",
-  "11-7": "以基督為我們的美德", "11-9": "歌羅西書簡介及引言", "11-11": "神的管家職分",
-  "11-13": "一切影兒的實體", "11-14": "基督是我們的生命", "11-15": "新人的成分",
-  "11-16": "與基督聯合的生活（一）", "11-17": "與基督聯合的生活(二)", "11-18": "結語－新人的生活",
-  "12-1": "為着召會生活之聖別生活的結構與起源", "12-2": "為着召會生活之聖別生活的撫育與堅固",
-  "12-3": "為着召會生活之聖別生活的勸勉、盼望、儆醒與謹守", "12-4": "與神的工作合作",
-  "12-5": "為着召會生活之聖別生活的鼓勵與改正", "12-6": "神的經綸與不同的教訓相對",
-  "12-7": "召會的功用", "12-8": "各面的囑咐", "12-9": "對召會敗落的豫防劑",
-  "12-10": "召會秩序的維持", "12-11": "基督超越天使", "12-12": "元帥、大祭司、使徒、神家的建設者",
-  "12-13": "來到施恩的寶座前", "12-14": "竭力前進達到成熟", "12-15": "君尊、神聖的大祭司 和更美的新約",
+  "5-11": "在人心裡的永遠",
+  "5-12": "歌中之歌",
+  "5-13": "以賽亞書－舊約的福音書",
+  "5-14": "以賽亞書所啟示的基督",
+  "5-15": "基督為耶和華的僕人",
+  "5-16": "小申言者書（一）",
+  "5-17": "小申言者書（二）",
+  "5-18": "小申言者書（三）",
+  "6-1": "基督－聖經一切圖畫的實際與應許的應驗",
+  "6-2": "基督家譜拾穗",
+  "6-3": "主的先鋒－施浸者約翰",
+  "6-4": "基督的出生",
+  "6-5": "嬰孩與幼年時期",
+  "6-6": "受浸、受膏與受試驗",
+  "6-7": "主盡職的開始",
+  "6-8": "主救恩的職事",
+  "6-9": "主生命供應的職事（一）",
+  "6-10": "主生命供應的職事（二）",
+  "6-11": "主生命供應的職事（三）",
+  "6-12": "主生命供應的職事（四）",
+  "6-13": "主生命供應的職事（五）",
+  "6-14": "主醫治病人的職事（一）",
+  "6-15": "主醫治病人的職事（二）",
+  "6-16": "主趕逐污鬼的職事",
+  "6-17": "主使死人復活的職事",
+  "6-18": "主職事的擴展",
+  "7-1": "九福之下諸天之國子民的性質",
+  "7-2": "國度子民最高標準的道德",
+  "7-3": "國度子民的義行與財物",
+  "7-4": "國度子民待人的原則與生活的根基",
+  "7-5": "實行父旨意的榜樣",
+  "7-6": "國度奧祕的揭示",
+  "7-7": "達到榮耀的路",
+  "7-8": "國度裡的關係",
+  "7-9": "三一神對罪人拯救的愛",
+  "7-10": "主在路加福音裡特別的指導",
+  "7-11": "主受死的預備",
+  "7-12": "主的受試驗",
+  "7-13": "國度的豫言",
+  "7-14": "逾越節的筵席與主設立晚餐",
+  "7-15": "主被捉拿並受審",
+  "7-16": "主的受死與埋葬",
+  "7-17": "主復活並向門徒顯現",
+  "7-18": "主的復活與升天",
+  "8-1": "復活升天之基督的繁殖",
+  "8-2": "聖靈的澆灌與召會生活的開始",
+  "8-3": "初期召會生活的延續",
+  "8-4": "召會受逼迫與福音的擴展",
+  "8-5": "腓利的傳揚、掃羅的轉變與彼得職事的擴展(一)",
+  "8-6": "彼得職事的擴展（二）與保羅職事的開始",
+  "8-7": "保羅所進行的職事（一）",
+  "8-8": "保羅開展的職事（二）",
+  "8-9": "保羅至耶路撒冷受捆鎖",
+  "8-10": "保羅最後的盡職",
+  "8-11": "神的福音－羅馬書",
+  "8-12": "定罪與稱義",
+  "8-13": "聖別（一）在生命中作王",
+  "8-14": "聖別（二）在靈裡內住基督的釋放",
+  "8-15": "得榮－榮耀的後嗣",
+  "8-16": "神的揀選我們的定命",
+  "8-17": "變化－為著身體生活的實行",
+  "8-18": "變化的召會生活及結語",
+  "9-1": "哥林多前書簡介",
+  "9-2": "基督是我們的智慧",
+  "9-3": "召會－神的耕地與建築",
+  "9-4": "神奧祕的管家",
+  "9-5": "召會－神的耕地與建築",
+  "9-6": "使徒的表白與主的筵席",
+  "9-7": "對付蒙頭與主的晚餐",
+  "9-8": "對付恩賜（一）",
+  "9-9": "對付恩賜（二）",
+  "9-10": "對付復活並收集饋送",
+  "9-11": "一個在靈裡之人的自傳",
+  "9-12": "新約的職事",
+  "9-13": "新約的執事",
+  "9-14": "瓦器裏的寶貝",
+  "9-15": "適應一切的生命",
+  "9-16": "財務的交通",
+  "9-17": "使徒權柄的表白",
+  "9-18": "使徒的勸勉問安與祝福",
+  "10-1": "神的兒子啟示在我裡面",
+  "10-2": "基督在我裡面活著",
+  "10-3": "那靠一信基督所得應許之福",
+  "10-4": "基督成形在我裡面",
+  "10-5": "神兒女的行事為人",
+  "10-6": "在基督裡作新造",
+  "10-7": "神給召會的福分（一）",
+  "10-8": "神給召會的福分（二）",
+  "10-9": "使徒為召會得啟示的禱告",
+  "10-10": "召會的產生與建造（一）",
+  "10-11": "召會的產生與建造（二）",
+  "10-12": "管家的職分與召會奧祕的啟示",
+  "10-13": "基督安家在我們心裏",
+  "10-14": "基督身體的內在構成 真正的一",
+  "10-15": "基督生機身體內在的建造",
+  "10-16": "新人的生活",
+  "10-17": "極大的奧秘－基督與召會",
+  "10-18": "屬靈的爭戰",
+  "11-1": "推廣福音的交通",
+  "11-2": "活基督以顯大基督",
+  "11-3": "以基督為我們的榜樣",
+  "11-4": "以基督為我們常時的救恩",
+  "11-5": "以基督為至寶 為我們的義",
+  "11-6": "以基督為我們的目標和期待",
+  "11-7": "以基督為我們的美德",
+  "11-8": "以基督為我們的祕訣",
+  "11-9": "歌羅西書簡介及引言",
+  "11-10": "眾聖徒的分、神的像、創造並復活裏的首生者",
+  "11-11": "神的管家職分",
+  "11-12": "神的奧秘",
+  "11-13": "一切影兒的實體",
+  "11-14": "基督是我們的生命",
+  "11-15": "新人的成分",
+  "11-16": "與基督聯合的生活（一）",
+  "11-17": "與基督聯合的生活(二)",
+  "11-18": "結語－新人的生活",
+  "12-1": "為着召會生活之聖別生活的結構與起源",
+  "12-2": "為着召會生活之聖別生活的撫育與堅固",
+  "12-3": "為着召會生活之聖別生活的勸勉、盼望、儆醒與謹守",
+  "12-4": "與神的工作合作",
+  "12-5": "為着召會生活之聖別生活的鼓勵與改正",
+  "12-6": "神的經綸與不同的教訓相對",
+  "12-7": "召會的功用",
+  "12-8": "各面的囑咐",
+  "12-9": "對召會敗落的豫防劑",
+  "12-10": "召會秩序的維持",
+  "12-11": "基督超越天使",
+  "12-12": "元帥、大祭司、使徒、神家的建設者",
+  "12-13": "來到施恩的寶座前",
+  "12-14": "竭力前進達到成熟",
+  "12-15": "君尊、神聖的大祭司 和更美的新約",
   "12-16": "更美的祭物和更美的血，同更大、更全備的帳幕",
-  "12-17": "信心的歷史和見證人", "12-18": "奔跑賽程，仰望信心的創始者與成終者",
+  "12-17": "信心的歷史和見證人",
+  "12-18": "奔跑賽程，仰望信心的創始者與成終者",
   "13-1": "基督徒實行的完全"
 };
-/* 完整核對中頁數未完整的課，目錄上如實標註，不宣稱為完整十頁。 */
-var INCOMPLETE = {"10-17": true};
+/* 頁數少於十頁的課，目錄上如實標註，不宣稱為完整十頁；有真圖卡者只顯示現有頁。 */
+var INCOMPLETE = {
+  "11-17": true, "11-18": true,
+  "12-7": true, "12-10": true, "12-17": true
+};
+/* 已對上的課與實際頁數。圖檔在 cards/冊序-課號/01.webp 起，依頁序。
+   第六冊第11課至第十二冊第16課用 Instagram @tcyp.honeymilk 輪播（各十頁）。
+   其餘已對上的課用第二份 Canva。未列入 Canva 第 116–120 頁（課號寫第十二冊第14課、課名卻是「一切影兒的實體」），
+   以及第 82–87 頁（課號寫第十三冊第2課、課名卻是第1課的「為着召會生活之聖別生活的結構與起源」）。 */
+var CARD_COUNTS = {
+  "5-11": 10, "5-12": 10, "5-13": 10, "5-14": 10, "5-15": 10, "5-16": 10, "5-17": 10, "5-18": 10,
+  "6-1": 10, "6-2": 10, "6-3": 10, "6-4": 10, "6-5": 10, "6-6": 10, "6-7": 10, "6-8": 10, "6-9": 10, "6-10": 10, "6-11": 10, "6-12": 10, "6-13": 10, "6-14": 10, "6-15": 10, "6-16": 10, "6-17": 10, "6-18": 10,
+  "7-1": 10, "7-2": 10, "7-3": 10, "7-4": 10, "7-5": 10, "7-6": 10, "7-7": 10, "7-8": 10, "7-9": 10, "7-10": 10, "7-11": 10, "7-12": 10, "7-13": 10, "7-14": 10, "7-15": 10, "7-16": 10, "7-17": 10, "7-18": 10,
+  "8-1": 10, "8-2": 10, "8-3": 10, "8-4": 10, "8-5": 10, "8-6": 10, "8-7": 10, "8-8": 10, "8-9": 10, "8-10": 10, "8-11": 10, "8-12": 10, "8-13": 10, "8-14": 10, "8-15": 10, "8-16": 10, "8-17": 10, "8-18": 10,
+  "9-1": 10, "9-2": 10, "9-3": 10, "9-4": 10, "9-5": 10, "9-6": 10, "9-7": 10, "9-8": 10, "9-9": 10, "9-10": 10, "9-11": 10, "9-12": 10, "9-13": 10, "9-14": 10, "9-15": 10, "9-16": 10, "9-17": 10, "9-18": 10,
+  "10-1": 10, "10-2": 10, "10-3": 10, "10-4": 10, "10-5": 10, "10-6": 10, "10-7": 10, "10-8": 10, "10-9": 10, "10-10": 10, "10-11": 10, "10-12": 10, "10-13": 10, "10-14": 10, "10-15": 10, "10-16": 10, "10-17": 10, "10-18": 10,
+  "11-1": 10, "11-2": 10, "11-3": 10, "11-4": 10, "11-5": 10, "11-6": 10, "11-7": 10, "11-8": 10, "11-9": 10, "11-10": 10, "11-11": 10, "11-12": 10, "11-13": 10, "11-14": 10, "11-15": 10, "11-16": 10, "11-17": 7, "11-18": 1,
+  "12-1": 10, "12-3": 10, "12-6": 10, "12-7": 7, "12-8": 10, "12-9": 10, "12-10": 5, "12-14": 10, "12-15": 10, "12-17": 9, "12-18": 10
+};
+function pageCount(v, l){
+  return CARD_COUNTS[v + "-" + l] || 10;
+}
 /* 已選用 Canva 版本的課：第十三冊第 9 課採用第二個版本（第二份 Canva 連結第 197–206 頁）。 */
 var CANVA_LINKS = {"12-9": {url: "https://canva.link/m6da8x01ixyhxlq", label: "在 Canva 看這課圖卡（第二個版本）", note: "連結會從設計開頭打開，請翻到第 197–206 頁，就是這一課的 10 頁圖卡。"}};
 function lessonTitle(vi, li){
@@ -241,29 +385,43 @@ VOLUMES.forEach(function(title, vi){
 });
 
 var curV = 0, curL = 1, curP = 1, mode = 'flip';
-function cardHTML(v, l, p){
+var CN_PAGE = ['','一','二','三','四','五','六','七','八','九','十'];
+function cardHTML(v, l, p, lazy){
+  var key = v + '-' + l;
+  if (CARD_COUNTS[key]){
+    var file = (p < 10 ? '0' : '') + p + '.webp';
+    var lt = lessonTitle(v, l);
+    var alt = VOLUMES[v] + ' 第' + l + '課' + (lt ? ' ' + lt : '') + ' 第' + p + '頁';
+    return '<img class="cardImg" src="cards/' + key + '/' + file + '" alt="' + alt + '" width="1080" height="1080" decoding="async"' + (lazy ? ' loading="lazy"' : '') + '>';
+  }
   return '<div class="big">✦</div><h3>第' + p + '頁</h3>' +
     '<p>' + VOLUMES[v] + ' · 第' + l + '課<br>圖卡待置入（Canva 順序確認後換上）</p>';
 }
 function render(){
+  var total = pageCount(curV, curL);
+  if (curP > total) curP = total;
+  var key = curV + '-' + curL;
   document.getElementById('lessonVolume').textContent = VOLUMES[curV];
   var lt = lessonTitle(curV, curL);
   document.getElementById('lessonTitle').textContent = '第' + curL + '課' + (lt ? '　' + lt : '');
-  document.getElementById('lessonSub').textContent = '共十頁 · 翻頁或捲動皆可閱讀';
+  document.getElementById('lessonSub').textContent = '共' + (CN_PAGE[total] || total) + '頁' +
+    (INCOMPLETE[key] ? '（頁數未完整）' : '') + ' · 翻頁或捲動皆可閱讀';
   var cl = document.getElementById('canvaLink');
-  var cv = CANVA_LINKS[curV + "-" + curL];
+  var cv = CANVA_LINKS[key];
   if (cv){
     cl.style.display = 'block';
     cl.innerHTML = '<a href="' + cv.url + '" target="_blank" rel="noopener">' + cv.label + '</a><p>' + cv.note + '</p>';
   } else {
     cl.style.display = 'none'; cl.innerHTML = '';
   }
-  document.getElementById('cardBox').innerHTML = cardHTML(curV, curL, curP);
-  document.getElementById('pageNo').textContent = curP + ' / 10';
+  var box = document.getElementById('cardBox');
+  box.className = 'card' + (CARD_COUNTS[key] ? ' hasImg' : '');
+  box.innerHTML = cardHTML(curV, curL, curP, false);
+  document.getElementById('pageNo').textContent = curP + ' / ' + total;
   document.getElementById('prevBtn').disabled = curP <= 1;
-  document.getElementById('nextBtn').disabled = curP >= 10;
+  document.getElementById('nextBtn').disabled = curP >= total;
   var dots = document.getElementById('dots'); dots.innerHTML = '';
-  for (var i = 1; i <= 10; i++){
+  for (var i = 1; i <= total; i++){
     (function(p){
       var d = document.createElement('i');
       if (p === curP) d.className = 'on';
@@ -272,9 +430,10 @@ function render(){
     })(i);
   }
   var sc = document.getElementById('scrollCards'); sc.innerHTML = '';
-  for (var j = 1; j <= 10; j++){
-    var c = document.createElement('div'); c.className = 'card';
-    c.innerHTML = cardHTML(curV, curL, j); sc.appendChild(c);
+  for (var j = 1; j <= total; j++){
+    var c = document.createElement('div');
+    c.className = 'card' + (CARD_COUNTS[key] ? ' hasImg' : '');
+    c.innerHTML = cardHTML(curV, curL, j, true); sc.appendChild(c);
   }
 }
 function setMode(m){
@@ -313,20 +472,20 @@ document.getElementById('backBtn').onclick = function(){
   history.replaceState(null, '', '#'); window.scrollTo(0, 0);
 };
 document.getElementById('prevBtn').onclick = function(){ if (curP > 1){ curP--; render(); } };
-document.getElementById('nextBtn').onclick = function(){ if (curP < 10){ curP++; render(); } };
+document.getElementById('nextBtn').onclick = function(){ if (curP < pageCount(curV, curL)){ curP++; render(); } };
 document.getElementById('flipBtn').onclick = function(){ setMode('flip'); };
 document.getElementById('scrollBtn').onclick = function(){ setMode('scroll'); };
 document.addEventListener('keydown', function(e){
   if (document.getElementById('lessonView').style.display !== 'block' || mode !== 'flip') return;
   if (e.key === 'ArrowLeft' && curP > 1){ curP--; render(); }
-  if (e.key === 'ArrowRight' && curP < 10){ curP++; render(); }
+  if (e.key === 'ArrowRight' && curP < pageCount(curV, curL)){ curP++; render(); }
 });
 var tx = 0;
 document.getElementById('flipCard').addEventListener('touchstart', function(e){ tx = e.changedTouches[0].clientX; }, {passive:true});
 document.getElementById('flipCard').addEventListener('touchend', function(e){
   if (mode !== 'flip') return;
   var dx = e.changedTouches[0].clientX - tx;
-  if (dx < -40 && curP < 10){ curP++; render(); }
+  if (dx < -40 && curP < pageCount(curV, curL)){ curP++; render(); }
   if (dx > 40 && curP > 1){ curP--; render(); }
 }, {passive:true});
 </script>
