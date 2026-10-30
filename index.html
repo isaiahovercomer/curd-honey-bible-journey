@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>奶酪與蜂蜜｜聖經之旅福音選讀</title>
+<link rel="icon" type="image/png" href="assets/logo.png">
+<link rel="apple-touch-icon" href="assets/logo.png">
 <meta name="description" content="聖經之旅福音選讀：十五冊，每冊十八課，每課十頁圖卡。">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@700;900&display=swap" rel="stylesheet">
@@ -24,6 +26,10 @@
       linear-gradient(180deg,#fdf3d7 0%,#fdf8ee 55%,#fdf8ee 100%);
     border-bottom:1px solid var(--line);text-align:center;
     padding:56px 20px 36px}
+  /* 團隊 logo：放在頁首左上角當品牌標記，不擠到主標題插畫 */
+  .hero{position:relative}
+  .heroLogo{position:absolute;top:14px;left:16px;width:64px;height:auto;filter:drop-shadow(0 3px 8px rgba(91,63,29,.18))}
+  @media (max-width:420px){.heroLogo{width:52px;top:10px;left:10px}}
   .hero small{letter-spacing:.35em;color:var(--honey);font-size:13px}
   .heroArt{width:180px;height:86px;margin:0 auto 2px}
   .hero h1{margin:6px 0 14px;font-family:"Noto Sans TC","Noto Serif TC",serif;font-weight:900;
@@ -102,12 +108,14 @@
     background:var(--card);display:flex;align-items:center;justify-content:center;text-decoration:none}
   .social svg{width:24px;height:24px;fill:var(--brown)}
   .social a:hover{border-color:var(--honey2)}
+  .footLogo{display:block;width:52px;height:auto;margin:0 auto 12px}
   footer p{margin:4px 0;font-size:13px}
   @media (max-width:420px){.volume.open .lessons{grid-template-columns:repeat(3,1fr)}}
 </style>
 </head>
 <body>
   <header class="hero">
+    <img class="heroLogo" src="assets/logo.png" alt="TCYP Curds &amp; Honey 標誌" width="160" height="174">
     <small>福音選讀</small>
     <!-- 原創卡通插畫：左為帶孔的奶酪塊，右為滴著蜜的蜜罐與小蜜蜂，非書房封面複製 -->
     <svg class="heroArt" viewBox="0 0 180 86" aria-hidden="true">
@@ -159,6 +167,7 @@
   </main>
 
   <footer>
+    <img class="footLogo" src="assets/logo.png" alt="" width="160" height="174" loading="lazy">
     <div class="social">
       <a href="https://www.facebook.com/share/1DqHUpfJ7D/" target="_blank" rel="noopener" aria-label="Facebook">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 21v-7h2.4l.4-3h-2.8V9.1c0-.9.3-1.5 1.6-1.5h1.3V4.9c-.3 0-1.1-.1-2.1-.1-2.1 0-3.6 1.3-3.6 3.7V11H8.3v3h2.4v7h2.8z"/></svg>
