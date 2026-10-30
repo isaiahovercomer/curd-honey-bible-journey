@@ -26,10 +26,9 @@
       linear-gradient(180deg,#fdf3d7 0%,#fdf8ee 55%,#fdf8ee 100%);
     border-bottom:1px solid var(--line);text-align:center;
     padding:56px 20px 36px}
-  /* 團隊 logo：放在頁首左上角當品牌標記，不擠到主標題插畫 */
-  .hero{position:relative}
-  .heroLogo{position:absolute;top:14px;left:16px;width:64px;height:auto;filter:drop-shadow(0 3px 8px rgba(91,63,29,.18))}
-  @media (max-width:420px){.heroLogo{width:52px;top:10px;left:10px}}
+  /* 團隊 logo：置中放在目錄說明卡片上方 */
+  .introLogo{display:block;width:84px;height:auto;margin:6px auto 14px;filter:drop-shadow(0 3px 8px rgba(91,63,29,.18))}
+  @media (max-width:420px){.introLogo{width:72px;margin:4px auto 12px}}
   .hero small{letter-spacing:.35em;color:var(--honey);font-size:13px}
   .heroArt{width:180px;height:86px;margin:0 auto 2px}
   .hero h1{margin:6px 0 14px;font-family:"Noto Sans TC","Noto Serif TC",serif;font-weight:900;
@@ -115,7 +114,6 @@
 </head>
 <body>
   <header class="hero">
-    <img class="heroLogo" src="assets/logo.png" alt="TCYP Curds &amp; Honey 標誌" width="160" height="174">
     <small>福音選讀</small>
     <!-- 原創卡通插畫：左為帶孔的奶酪塊，右為滴著蜜的蜜罐與小蜜蜂，非書房封面複製 -->
     <svg class="heroArt" viewBox="0 0 180 86" aria-hidden="true">
@@ -136,6 +134,7 @@
 
   <main class="wrap">
     <section id="catalog">
+      <img class="introLogo" src="assets/logo.png" alt="TCYP Curds &amp; Honey 標誌" width="160" height="174">
       <div class="note">目錄：十五冊共 270 課。點冊名展開十八課，點課名進入該課圖卡。各冊色調參考台灣福音書房封面主色（未使用封面圖）；上方搜尋框可直接找冊名或課名。Instagram @tcyp.honeymilk 已貼出的課，依輪播順序顯示完整真圖卡；其餘已對上 Canva 設計的課，也依頁序顯示真圖卡。頁數少於十頁的，目錄標「頁數未完整」，只顯示現有的頁，不補假頁。還沒有圖卡的課仍是十頁版式佔位，課名尚未出現的仍顯示「標題待補」。第十三冊第 9 課採用第二個 Canva 版本，進該課頁面有 Canva 連結。</div>
       <input class="search" id="searchInput" type="search" placeholder="搜尋冊名、課名，例如：召會、基督、施恩…" aria-label="搜尋目錄">
       <div id="volumes"></div>
