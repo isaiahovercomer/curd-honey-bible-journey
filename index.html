@@ -179,6 +179,27 @@
   .volume.open>button:hover .chev{transform:rotate(180deg) translateY(2px)}
   @media (max-width:480px){.volume.open .vmotif{width:62px;height:62px;bottom:4px}.volume.open .lessons{padding-bottom:64px}}
   @media (prefers-reduced-motion:reduce){.flyBee{animation:none}.chev{transition:none}.lessons button{transition:none!important;transform:none!important}}
+
+  /* ===== 圖卡內文搜尋結果 ===== */
+  #textHits:empty{display:none}
+  #textHits{margin-top:14px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px 14px 6px;
+    box-shadow:0 3px 12px rgba(183,121,31,.08)}
+  .thHead{display:flex;align-items:center;gap:8px;font-family:"Noto Sans TC",sans-serif;font-weight:700;font-size:15px;color:var(--brown);margin:0 2px 8px}
+  .thHead svg{width:26px;height:26px;flex:none}
+  .thHead small{font-weight:400;color:var(--muted);font-size:13px}
+  .thLesson{--lk:var(--vacc,#8a6d3b);border:1.5px solid color-mix(in srgb,var(--lk) 30%,#fff);border-left:6px solid var(--lk);
+    background:color-mix(in srgb,var(--lk) 7%,#fff);border-radius:14px;padding:9px 12px 8px;margin-bottom:10px}
+  .thTitle{font-size:15px;color:color-mix(in srgb,var(--lk) 72%,#000);font-weight:700;line-height:1.45}
+  .thTitle span{font-weight:400;color:var(--muted);font-size:13px}
+  .thPage{display:flex;gap:8px;align-items:flex-start;width:100%;text-align:left;border:0;background:transparent;cursor:pointer;
+    font-family:inherit;padding:6px 4px;border-radius:10px;color:#33291f;font-size:14px;line-height:1.55}
+  .thPage:hover,.thPage:focus-visible{background:color-mix(in srgb,var(--lk) 13%,#fff);outline:none}
+  .thPage b{flex:none;font-family:"Noto Sans TC",sans-serif;font-weight:700;font-size:12px;color:#fff;background:var(--lk);
+    border-radius:999px;padding:1px 9px;margin-top:2px}
+  .thPage mark{background:color-mix(in srgb,var(--lk) 28%,#fff);color:inherit;border-radius:3px;padding:0 1px}
+  .thMore{font-size:13px;color:var(--muted);margin:0 4px 8px}
+  .thMoreBtn{border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 14px;font-family:inherit;font-size:13px;cursor:pointer;color:var(--brown);margin:0 0 10px}
+  @media (max-width:480px){.thHead{flex-wrap:wrap;row-gap:0}.thHead small{flex-basis:100%;padding-left:34px}#textHits{padding:10px 10px 4px}.thPage{font-size:13px}.thTitle{font-size:14px}}
 </style>
 </head>
 <body>
@@ -248,8 +269,9 @@
   <main class="wrap">
     <section id="catalog">
       <img class="introLogo" src="assets/logo.png" alt="TCYP Curds &amp; Honey 標誌" width="160" height="174">
-      <div class="note"><svg class="deco noteBee" aria-hidden="true"><use href="#m-bee"/></svg>目錄：聖經之旅十五冊共 270 課。點冊名展開十八課，點課名進入該課圖卡。上方搜尋框可直接找冊名或課名。還沒有圖卡的課仍是十頁版式佔位，課名尚未出現的仍顯示「標題待補」。</div>
-      <input class="search" id="searchInput" type="search" placeholder="搜尋冊名、課名，例如：召會、基督、施恩…" aria-label="搜尋目錄">
+      <div class="note"><svg class="deco noteBee" aria-hidden="true"><use href="#m-bee"/></svg>目錄：聖經之旅十五冊共 270 課。點冊名展開十八課，點課名進入該課圖卡。上方搜尋框可直接找冊名、課名，也能搜尋圖卡上的文字（經節、詩歌、內文），並標出在第幾頁。還沒有圖卡的課仍是十頁版式佔位，課名尚未出現的仍顯示「標題待補」。</div>
+      <input class="search" id="searchInput" type="search" placeholder="搜尋冊名、課名或圖卡內文，例如：召會、乳母、約三16…" aria-label="搜尋目錄與圖卡內文">
+      <div id="textHits" aria-live="polite"></div>
       <div id="volumes"></div>
       <!-- 目錄收尾：小蜜蜂沿虛線飛向頁尾，左邊一塊奶酪探頭 -->
       <svg class="volEnd" viewBox="0 0 700 90" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
@@ -598,12 +620,12 @@ function setMode(m){
   document.getElementById('flipBtn').className = m === 'flip' ? 'on' : '';
   document.getElementById('scrollBtn').className = m === 'scroll' ? 'on' : '';
 }
-function openLesson(v, l){
-  curV = v; curL = l; curP = 1; setMode('flip');
+function openLesson(v, l, p){
+  curV = v; curL = l; curP = p || 1; setMode('flip');
   document.getElementById('catalog').style.display = 'none';
   document.getElementById('lessonView').style.display = 'block';
   render(); window.scrollTo(0, 0);
-  history.replaceState(null, '', '#v' + (v+1) + '-l' + l);
+  history.replaceState(null, '', '#v' + (v+1) + '-l' + l + (p > 1 ? '-p' + p : ''));
 }
 document.getElementById('searchInput').addEventListener('input', function(e){
   var q = e.target.value.trim().toLowerCase();
@@ -626,6 +648,74 @@ document.getElementById('searchInput').addEventListener('input', function(e){
     v.style.display = any ? '' : 'none';
     if (any) v.classList.add('open');
   }
+});
+
+/* ===== 圖卡內文全文搜尋：第一次搜尋時才載入 search-index.json ===== */
+/* 異體字只做一對一的簡單對照（字數不變，標記位置不會跑掉） */
+var VARIANT = {'着':'著','裡':'裏','爲':'為','衆':'眾','秘':'祕','啓':'啟','綫':'線','遍':'徧','恒':'恆','麽':'麼','麼':'麼','峯':'峰','羣':'群','於':'於','祇':'只','纔':'才','甦':'蘇','証':'證','銹':'鏽','画':'畫','台':'臺'};
+function normT(x){ var o=''; for (var i=0;i<x.length;i++){ var c=x.charAt(i); o += VARIANT[c] || c; } return o.toLowerCase(); }
+var TEXT_INDEX = null, TEXT_LOADING = null, NORM_CACHE = {};
+function loadTextIndex(){
+  if (TEXT_INDEX || TEXT_LOADING) return TEXT_LOADING;
+  TEXT_LOADING = fetch('search-index.json').then(function(r){ return r.json(); }).then(function(d){
+    TEXT_INDEX = d.t || {};
+    for (var k in TEXT_INDEX) NORM_CACHE[k] = TEXT_INDEX[k].map(normT);
+    return TEXT_INDEX;
+  }).catch(function(){ TEXT_INDEX = {}; return TEXT_INDEX; });
+  return TEXT_LOADING;
+}
+function snippet(text, i, len){
+  var a = Math.max(0, i - 18), b = Math.min(text.length, i + len + 30);
+  return (a > 0 ? '…' : '') + escHTML(text.slice(a, i)) + '<mark>' + escHTML(text.slice(i, i + len)) + '</mark>' +
+    escHTML(text.slice(i + len, b)) + (b < text.length ? '…' : '');
+}
+var hitLimit = 20;
+function renderTextHits(q){
+  var box = document.getElementById('textHits');
+  if (!q){ box.innerHTML = ''; return; }
+  if (!TEXT_INDEX){ box.innerHTML = '<div class="thHead">正在載入圖卡內文…</div>'; loadTextIndex().then(function(){ renderTextHits(currentQ()); }); return; }
+  var nq = normT(q), hits = [];
+  VOLUMES.forEach(function(title, v){
+    for (var l = 1; l <= 18; l++){
+      var key = v + '-' + l, pages = NORM_CACHE[key];
+      if (!pages) continue;
+      var ph = [];
+      for (var p = 0; p < pages.length; p++){
+        var i = pages[p].indexOf(nq);
+        if (i >= 0) ph.push({p: p + 1, i: i});
+      }
+      if (ph.length) hits.push({v: v, l: l, key: key, pages: ph});
+    }
+  });
+  var nPages = hits.reduce(function(a, h){ return a + h.pages.length; }, 0);
+  var html = '<div class="thHead"><svg aria-hidden="true"><use href="#m-bee"/></svg>圖卡內文' +
+    (hits.length ? '：' + hits.length + ' 課、' + nPages + ' 頁有「' + escHTML(q) + '」<small>點一行直接翻到那一頁</small>' : '：沒有找到「' + escHTML(q) + '」<small>（還沒有圖卡的課無法搜尋內文）</small>') + '</div>';
+  hits.slice(0, hitLimit).forEach(function(h){
+    var lt = lessonTitle(h.v, h.l);
+    html += '<div class="thLesson" style="--vacc:' + VOLUME_COLORS[h.v].a + '"><div class="thTitle">第' + h.l + '課' + (lt ? '　' + escHTML(lt) : '') +
+      ' <span>' + escHTML(VOLUMES[h.v]) + '</span></div>';
+    h.pages.slice(0, 4).forEach(function(pg){
+      html += '<button class="thPage" data-v="' + h.v + '" data-l="' + h.l + '" data-p="' + pg.p + '"><b>第' + pg.p + '頁</b><span>' +
+        snippet(TEXT_INDEX[h.key][pg.p - 1], pg.i, nq.length) + '</span></button>';
+    });
+    if (h.pages.length > 4) html += '<div class="thMore">另有 ' + (h.pages.length - 4) + ' 頁也有這個詞</div>';
+    html += '</div>';
+  });
+  if (hits.length > hitLimit) html += '<button class="thMoreBtn" id="thMoreBtn">再顯示更多（還有 ' + (hits.length - hitLimit) + ' 課）</button>';
+  box.innerHTML = html;
+  var mb = document.getElementById('thMoreBtn');
+  if (mb) mb.onclick = function(){ hitLimit += 20; renderTextHits(currentQ()); };
+}
+function currentQ(){ return document.getElementById('searchInput').value.trim(); }
+document.getElementById('textHits').addEventListener('click', function(e){
+  var b = e.target.closest('.thPage'); if (!b) return;
+  openLesson(+b.dataset.v, +b.dataset.l, +b.dataset.p);
+});
+var thTimer = null;
+document.getElementById('searchInput').addEventListener('focus', loadTextIndex);
+document.getElementById('searchInput').addEventListener('input', function(){
+  hitLimit = 20; clearTimeout(thTimer);
+  thTimer = setTimeout(function(){ renderTextHits(currentQ()); }, 150);
 });
 document.getElementById('backBtn').onclick = function(){
   document.getElementById('lessonView').style.display = 'none';
