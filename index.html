@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>奶酪與蜂蜜｜聖經之旅福音選讀</title>
+<link rel="icon" type="image/png" href="assets/logo.png">
+<link rel="apple-touch-icon" href="assets/logo.png">
 <meta name="description" content="聖經之旅福音選讀：十五冊，每冊十八課，每課十頁圖卡。">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@700;900&display=swap" rel="stylesheet">
@@ -24,6 +26,9 @@
       linear-gradient(180deg,#fdf3d7 0%,#fdf8ee 55%,#fdf8ee 100%);
     border-bottom:1px solid var(--line);text-align:center;
     padding:56px 20px 36px}
+  /* 團隊 logo：置中放在目錄說明卡片上方 */
+  .introLogo{display:block;width:84px;height:auto;margin:6px auto 14px;filter:drop-shadow(0 3px 8px rgba(91,63,29,.18))}
+  @media (max-width:420px){.introLogo{width:72px;margin:4px auto 12px}}
   .hero small{letter-spacing:.35em;color:var(--honey);font-size:13px}
   .heroArt{width:180px;height:86px;margin:0 auto 2px}
   .hero h1{margin:6px 0 14px;font-family:"Noto Sans TC","Noto Serif TC",serif;font-weight:900;
@@ -102,6 +107,7 @@
     background:var(--card);display:flex;align-items:center;justify-content:center;text-decoration:none}
   .social svg{width:24px;height:24px;fill:var(--brown)}
   .social a:hover{border-color:var(--honey2)}
+  .footLogo{display:block;width:52px;height:auto;margin:0 auto 12px}
   footer p{margin:4px 0;font-size:13px}
   @media (max-width:420px){.volume.open .lessons{grid-template-columns:repeat(3,1fr)}}
 </style>
@@ -128,6 +134,7 @@
 
   <main class="wrap">
     <section id="catalog">
+      <img class="introLogo" src="assets/logo.png" alt="TCYP Curds &amp; Honey 標誌" width="160" height="174">
       <div class="note">目錄：十五冊共 270 課。點冊名展開十八課，點課名進入該課圖卡。各冊色調參考台灣福音書房封面主色（未使用封面圖）；上方搜尋框可直接找冊名或課名。Instagram @tcyp.honeymilk 已貼出的課，依輪播順序顯示完整真圖卡；其餘已對上 Canva 設計的課，也依頁序顯示真圖卡。頁數少於十頁的，目錄標「頁數未完整」，只顯示現有的頁，不補假頁。還沒有圖卡的課仍是十頁版式佔位，課名尚未出現的仍顯示「標題待補」。第十三冊第 9 課採用第二個 Canva 版本，進該課頁面有 Canva 連結。</div>
       <input class="search" id="searchInput" type="search" placeholder="搜尋冊名、課名，例如：召會、基督、施恩…" aria-label="搜尋目錄">
       <div id="volumes"></div>
@@ -159,6 +166,7 @@
   </main>
 
   <footer>
+    <img class="footLogo" src="assets/logo.png" alt="" width="160" height="174" loading="lazy">
     <div class="social">
       <a href="https://www.facebook.com/share/1DqHUpfJ7D/" target="_blank" rel="noopener" aria-label="Facebook">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 21v-7h2.4l.4-3h-2.8V9.1c0-.9.3-1.5 1.6-1.5h1.3V4.9c-.3 0-1.1-.1-2.1-.1-2.1 0-3.6 1.3-3.6 3.7V11H8.3v3h2.4v7h2.8z"/></svg>
