@@ -56,15 +56,40 @@
   .volume>button strong{font-size:18px}
   .volume>button span{color:var(--muted);font-size:13px;white-space:nowrap}
   .volume>button .chev{color:var(--honey);font-size:20px}
-  .lessons{display:none;padding:0 12px 14px}
-  .volume.open .lessons{display:block}
+  .lessons{display:none;padding:4px 16px 20px}
+  /* 十八課：圓角正方形按鈕，每排三個、依序六列。
+     所有顏色都由該冊主色 --vacc 推導：底色＝主色淡化、邊框與上緣色條＝主色、課號＝主色加深、內文＝深色中性。
+     狀態（頁數未完整／圖卡待補／標題待補）只在同一套色系內變化。 */
+  .lessons{--lk:var(--vacc,#8a6d3b);
+    --lk-deep:color-mix(in srgb,var(--lk) 72%,#000);
+    --lk-bg:color-mix(in srgb,var(--lk) 9%,#fff);
+    --lk-bg2:color-mix(in srgb,var(--lk) 4%,#fff);
+    --lk-line:color-mix(in srgb,var(--lk) 32%,#fff);
+    --lk-tag:color-mix(in srgb,var(--lk) 16%,#fff)}
+  .volume.open .lessons{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:660px;margin:0 auto}
+  .lessons button{position:relative;aspect-ratio:1/1;width:100%;min-width:0;overflow:hidden;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+    border:1.5px solid var(--lk-line);border-top:5px solid var(--lk);background:var(--lk-bg);border-radius:24px;
+    padding:16px 14px 18px;cursor:pointer;font-family:inherit;color:#33291f;text-align:center;
+    box-shadow:0 2px 8px color-mix(in srgb,var(--lk) 12%,transparent);transition:transform .35s cubic-bezier(.34,1.56,.64,1),box-shadow .2s,border-color .2s;transform:rotate(var(--rot,0deg))}
+  .lessons button:nth-child(odd){--rot:-.6deg}.lessons button:nth-child(even){--rot:.6deg}
+  .lessons button:active{transform:scale(.95)}
+  .lessons button strong{font-family:"Noto Sans TC",sans-serif;font-weight:900;font-size:20px;color:var(--lk-deep);letter-spacing:.06em}
+  .lessons button .ltitle{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:4;line-clamp:4;
+    overflow:hidden;font-size:15px;line-height:1.5;color:#33291f;word-break:break-all;max-width:92%}
+  .lessons button .ltitle.none{color:color-mix(in srgb,var(--lk-deep) 60%,#fff);font-style:italic}
+  .lessons button .ltag{font-size:12px;line-height:1.3;color:var(--lk-deep);background:var(--lk-tag);
+    border-radius:999px;padding:1px 9px;white-space:nowrap}
+  /* 還沒有圖卡的課：同色系，底色更淡、邊框改虛線 */
+  .lessons button.ph{background:var(--lk-bg2);border-style:dashed;border-top-style:solid;box-shadow:none}
+  .lessons button mark{background:color-mix(in srgb,var(--lk) 28%,#fff);color:inherit;border-radius:3px;padding:0 1px}
+  .lessons button:hover{transform:translateY(-5px) rotate(0deg) scale(1.04);border-color:var(--lk);
+    box-shadow:0 6px 16px color-mix(in srgb,var(--lk) 22%,transparent)}
+  .lessons button:focus{outline:none}
+  .lessons button:focus-visible{outline:3px solid color-mix(in srgb,var(--lk) 45%,transparent);outline-offset:2px}
   .volume.open .chev{transform:rotate(180deg)}
-  .lessons button{display:block;width:100%;border:1px solid var(--line);background:#fffef9;border-radius:10px;
-    padding:11px 14px;margin-bottom:8px;cursor:pointer;font-family:inherit;font-size:15px;color:var(--ink);text-align:left}
-  .lessons button .ltitle{display:block;font-size:13px;color:var(--muted);margin-top:2px}
   .search{width:100%;border:1px solid var(--line);border-radius:999px;background:var(--card);
     padding:12px 18px;font-family:inherit;font-size:16px;color:var(--ink);margin-top:16px}
-  .lessons button:hover,.lessons button:focus{border-color:var(--honey2);outline:2px solid rgba(217,164,65,.35)}
   /* 課程頁 */
   #lessonView{display:none}
   .back{border:1px solid var(--line);background:var(--card);border-radius:999px;
@@ -109,11 +134,100 @@
   .social a:hover{border-color:var(--honey2)}
   .footLogo{display:block;width:52px;height:auto;margin:0 auto 12px}
   footer p{margin:4px 0;font-size:13px}
-  @media (max-width:420px){.volume.open .lessons{grid-template-columns:repeat(3,1fr)}}
+  @media (max-width:480px){
+    .lessons{padding:2px 10px 14px}
+    .volume.open .lessons{gap:11px}
+    .lessons button{border-radius:17px;padding:8px 6px 9px;gap:3px;border-top-width:4px}
+    .lessons button strong{font-size:14px}
+    .lessons button .ltitle{font-size:11px;line-height:1.35;max-width:100%;-webkit-line-clamp:4;line-clamp:4}
+    .lessons button .ltag{font-size:9.5px;padding:0 5px}
+  }
+
+  /* ===== 活潑裝飾（全部 SVG／CSS，aria-hidden，不擋點擊） ===== */
+  body{background-color:var(--cream);background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2256%22 height=%2297%22 viewBox=%220 0 56 97%22%3E%3Cpath d=%22M28 1 52 15V43L28 57 4 43V15ZM28 57V97M4 43 0 45M52 43 56 45M0 0%22 fill=%22none%22 stroke=%22%23b7791f%22 stroke-opacity=%22.07%22 stroke-width=%221.5%22/%3E%3C/svg%3E");background-size:56px 97px}
+  .hero{position:relative;border-bottom:0}
+  /* 頁首底緣像蜂蜜滴下來 */
+  .hero::after{content:"";position:absolute;left:0;right:0;top:100%;height:24px;z-index:1;pointer-events:none;
+    background:#f1c75a;opacity:.75;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 300 26%22 preserveAspectRatio=%22none%22%3E%3Cpath d=%22M0 0H300V6C290 6 288 7 287 10C286 14 281 14 280 10C279 7 276 6 262 6C244 6 241 8 239 15C237 24 227 24 225 15C223 8 220 6 200 6C186 6 184 7 183 9C182 12 178 12 177 9C176 7 174 6 150 6C130 6 127 8 125 13C123 19 115 19 113 13C111 8 108 6 88 6C70 6 67 8 65 17C63 27 52 27 50 17C48 8 45 6 30 6C20 6 18 7 17 10C16 13 12 13 11 10C10 7 8 6 0 6Z%22/%3E%3C/svg%3E") repeat-x 0 0/300px 24px;mask:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 300 26%22 preserveAspectRatio=%22none%22%3E%3Cpath d=%22M0 0H300V6C290 6 288 7 287 10C286 14 281 14 280 10C279 7 276 6 262 6C244 6 241 8 239 15C237 24 227 24 225 15C223 8 220 6 200 6C186 6 184 7 183 9C182 12 178 12 177 9C176 7 174 6 150 6C130 6 127 8 125 13C123 19 115 19 113 13C111 8 108 6 88 6C70 6 67 8 65 17C63 27 52 27 50 17C48 8 45 6 30 6C20 6 18 7 17 10C16 13 12 13 11 10C10 7 8 6 0 6Z%22/%3E%3C/svg%3E") repeat-x 0 0/300px 24px}
+  .wrap{padding-top:34px}
+  .deco{position:absolute;pointer-events:none;overflow:visible}
+  .heroBee{right:6%;top:18px;width:150px;height:96px}
+  .heroComb{left:5%;top:22px;width:74px;height:74px;opacity:.75;transform:rotate(-12deg)}
+  .heroCheese{left:9%;bottom:18px;width:58px;height:58px;transform:rotate(10deg);opacity:.9}
+  @media (max-width:560px){.heroBee{right:0;top:8px;width:104px;height:66px}.heroComb{left:-6px;top:8px;width:52px;height:52px}.heroCheese{display:none}}
+  .flyBee{animation:beeFloat 3.2s ease-in-out infinite}
+  @keyframes beeFloat{0%,100%{transform:translate(0,0) rotate(-4deg)}50%{transform:translate(0,-6px) rotate(3deg)}}
+  /* 說明卡片：右上角停著一隻小蜜蜂 */
+  #catalog{position:relative}
+  .note{position:relative}
+  .noteBee{right:-10px;top:-22px;width:46px;height:46px;transform:rotate(14deg)}
+  /* 展開的冊：上緣滴蜜（蜜色帶一點該冊主色），角落一個主題插圖，各冊輪流 */
+  .volume{position:relative}
+  .vdrip,.vmotif{display:none}
+  .volume.open .vdrip{display:block;position:relative;height:18px;margin:-2px 0 8px;pointer-events:none;
+    background:color-mix(in srgb,#f2b705 72%,var(--vacc));opacity:.5;
+    -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 300 26%22 preserveAspectRatio=%22none%22%3E%3Cpath d=%22M0 0H300V6C290 6 288 7 287 10C286 14 281 14 280 10C279 7 276 6 262 6C244 6 241 8 239 15C237 24 227 24 225 15C223 8 220 6 200 6C186 6 184 7 183 9C182 12 178 12 177 9C176 7 174 6 150 6C130 6 127 8 125 13C123 19 115 19 113 13C111 8 108 6 88 6C70 6 67 8 65 17C63 27 52 27 50 17C48 8 45 6 30 6C20 6 18 7 17 10C16 13 12 13 11 10C10 7 8 6 0 6Z%22/%3E%3C/svg%3E") repeat-x -60px 0/300px 18px;mask:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 300 26%22 preserveAspectRatio=%22none%22%3E%3Cpath d=%22M0 0H300V6C290 6 288 7 287 10C286 14 281 14 280 10C279 7 276 6 262 6C244 6 241 8 239 15C237 24 227 24 225 15C223 8 220 6 200 6C186 6 184 7 183 9C182 12 178 12 177 9C176 7 174 6 150 6C130 6 127 8 125 13C123 19 115 19 113 13C111 8 108 6 88 6C70 6 67 8 65 17C63 27 52 27 50 17C48 8 45 6 30 6C20 6 18 7 17 10C16 13 12 13 11 10C10 7 8 6 0 6Z%22/%3E%3C/svg%3E") repeat-x -60px 0/300px 18px}
+  .volume.open .vmotif{display:block;position:absolute;bottom:6px;width:96px;height:96px;color:var(--vacc);pointer-events:none}
+  .volume.open .vmotif.r{right:14px;transform:rotate(8deg)}
+  .volume.open .vmotif.l{left:14px;transform:rotate(-8deg)}
+  .volume.open .lessons{padding-bottom:80px}
+  .volEnd{display:block;width:100%;height:90px;margin:18px 0 -10px;pointer-events:none}
+  @media (max-width:480px){.volEnd{height:56px}}
+  .chev{display:inline-block;transition:transform .3s cubic-bezier(.34,1.56,.64,1)}
+  .volume.open .chev{transform:rotate(180deg)}
+  .volume>button:hover .chev{transform:translateY(2px)}
+  .volume.open>button:hover .chev{transform:rotate(180deg) translateY(2px)}
+  @media (max-width:480px){.volume.open .vmotif{width:62px;height:62px;bottom:4px}.volume.open .lessons{padding-bottom:64px}}
+  @media (prefers-reduced-motion:reduce){.flyBee{animation:none}.chev{transition:none}.lessons button{transition:none!important;transform:none!important}}
 </style>
 </head>
 <body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+    <symbol id="m-bee" viewBox="0 0 100 100">
+      <ellipse cx="44" cy="33" rx="13" ry="9" fill="#fff" stroke="#5b3f1d" stroke-width="2.5" transform="rotate(-24 44 33)"/>
+      <ellipse cx="61" cy="31" rx="12" ry="8" fill="#fff" stroke="#5b3f1d" stroke-width="2.5" transform="rotate(18 61 31)"/>
+      <ellipse cx="54" cy="55" rx="22" ry="16" fill="#f7c948" stroke="#5b3f1d" stroke-width="3"/>
+      <path d="M49 40q-5 15 0 30M61 41q5 14 0 28" stroke="#5b3f1d" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <path d="M76 54l9-1-8 7z" fill="#5b3f1d"/>
+      <circle cx="31" cy="52" r="11" fill="#5b3f1d"/><circle cx="27" cy="49" r="3" fill="#fff"/><circle cx="34" cy="58" r="2.6" fill="#f4a3a3"/>
+      <path d="M28 42q-4-10-11-10M34 42q1-11 7-14" stroke="#5b3f1d" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="m-comb" viewBox="0 0 100 100">
+      <g stroke="currentColor" stroke-width="3" stroke-linejoin="round">
+        <path id="hx" d="M0-13 11.3-6.5V6.5L0 13-11.3 6.5V-6.5Z" transform="translate(30 30)" fill="#fff8e1"/>
+        <path d="M0-13 11.3-6.5V6.5L0 13-11.3 6.5V-6.5Z" transform="translate(52.6 30)" fill="#f7c948"/>
+        <path d="M0-13 11.3-6.5V6.5L0 13-11.3 6.5V-6.5Z" transform="translate(41.3 49.5)" fill="#f2b705"/>
+        <path d="M0-13 11.3-6.5V6.5L0 13-11.3 6.5V-6.5Z" transform="translate(63.9 49.5)" fill="#fff8e1"/>
+        <path d="M0-13 11.3-6.5V6.5L0 13-11.3 6.5V-6.5Z" transform="translate(52.6 69)" fill="#f7c948"/>
+      </g>
+      <path d="M41 62q5 9 1 15q-6 4-6-3q0-5 5-12z" fill="#f2b705" stroke="#b7791f" stroke-width="2"/>
+    </symbol>
+    <symbol id="m-cheese" viewBox="0 0 100 100">
+      <path d="M12 74 80 30Q88 38 90 50V76Q52 82 12 74Z" fill="#f7c948" stroke="#e8a020" stroke-width="4" stroke-linejoin="round"/>
+      <path d="M12 74 80 30Q86 36 88 44Z" fill="#fbe08a" stroke="#e8a020" stroke-width="3" stroke-linejoin="round"/>
+      <circle cx="66" cy="64" r="6" fill="#e8a020"/><circle cx="80" cy="56" r="3.5" fill="#e8a020"/><circle cx="44" cy="70" r="3" fill="#e8a020"/>
+      <circle cx="58" cy="54" r="2" fill="#5b3f1d"/><circle cx="72" cy="47" r="2" fill="#5b3f1d"/><path d="M60 62q6 4 11-2" stroke="#5b3f1d" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="m-dipper" viewBox="0 0 100 100">
+      <path d="M16 12 56 52" stroke="#8a5a1f" stroke-width="7" stroke-linecap="round"/>
+      <g transform="rotate(45 66 62)"><rect x="50" y="50" width="32" height="24" rx="11" fill="#f2b705" stroke="#b7791f" stroke-width="3"/>
+      <path d="M58 51v22M66 50v24M74 51v22" stroke="#b7791f" stroke-width="3"/></g>
+      <path d="M64 78q7 10 2 15q-8 3-8-4q0-5 6-11z" fill="#f2b705" stroke="#b7791f" stroke-width="2"/>
+      <circle cx="84" cy="92" r="3" fill="#f2b705"/>
+    </symbol>
+    <symbol id="m-bowl" viewBox="0 0 100 100">
+      <path d="M22 50q4-14 14-8q6-12 16-4q9-10 16 2q12-4 12 10" fill="#fff" stroke="#c9b48a" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M14 52H86Q84 82 50 84Q16 82 14 52Z" fill="currentColor" stroke="#5b3f1d" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M36 44q14-6 30 2q-2 10-6 14q-4-8-8-8q-8 0-16-8z" fill="#f2b705"/>
+      <path d="M24 64q26 8 52 0" stroke="#fff" stroke-opacity=".5" stroke-width="3" fill="none" stroke-linecap="round"/>
+    </symbol>
+  </defs></svg>
   <header class="hero">
+    <svg class="deco heroComb" aria-hidden="true"><use href="#m-comb" style="color:#d9a441"/></svg>
+    <svg class="deco heroBee" viewBox="0 0 150 96" aria-hidden="true">
+      <path d="M6 80C30 92 52 70 40 56C30 44 14 58 26 66C44 78 70 62 92 44" fill="none" stroke="#b7791f" stroke-opacity=".55" stroke-width="2.2" stroke-dasharray="2 7" stroke-linecap="round"/>
+      <g class="flyBee" style="transform-origin:120px 34px"><use href="#m-bee" x="88" y="2" width="64" height="64" transform="matrix(-1 0 0 1 240 0)"/></g>
+    </svg>
     <small>福音選讀</small>
     <!-- 原創卡通插畫：左為帶孔的奶酪塊，右為滴著蜜的蜜罐與小蜜蜂，非書房封面複製 -->
     <svg class="heroArt" viewBox="0 0 180 86" aria-hidden="true">
@@ -134,9 +248,15 @@
   <main class="wrap">
     <section id="catalog">
       <img class="introLogo" src="assets/logo.png" alt="TCYP Curds &amp; Honey 標誌" width="160" height="174">
-      <div class="note">目錄：聖經之旅十五冊共 270 課。點冊名展開十八課，點課名進入該課圖卡。上方搜尋框可直接找冊名或課名。還沒有圖卡的課仍是十頁版式佔位，課名尚未出現的仍顯示「標題待補」。</div>
+      <div class="note"><svg class="deco noteBee" aria-hidden="true"><use href="#m-bee"/></svg>目錄：聖經之旅十五冊共 270 課。點冊名展開十八課，點課名進入該課圖卡。上方搜尋框可直接找冊名或課名。還沒有圖卡的課仍是十頁版式佔位，課名尚未出現的仍顯示「標題待補」。</div>
       <input class="search" id="searchInput" type="search" placeholder="搜尋冊名、課名，例如：召會、基督、施恩…" aria-label="搜尋目錄">
       <div id="volumes"></div>
+      <!-- 目錄收尾：小蜜蜂沿虛線飛向頁尾，左邊一塊奶酪探頭 -->
+      <svg class="volEnd" viewBox="0 0 700 90" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
+        <use href="#m-cheese" x="6" y="18" width="70" height="70"/>
+        <path d="M96 62C170 92 230 20 300 46S420 84 470 50 560 18 600 40" fill="none" stroke="#b7791f" stroke-opacity=".45" stroke-width="2.4" stroke-dasharray="2 8" stroke-linecap="round"/>
+        <g class="flyBee" style="transform-origin:640px 40px"><use href="#m-bee" x="604" y="6" width="66" height="66" transform="matrix(-1 0 0 1 1274 0)"/></g>
+      </svg>
     </section>
 
     <section id="lessonView" aria-live="polite">
@@ -366,6 +486,20 @@ var VOLUME_COLORS = [
   {a:"#4a8a6a", l:"#e2f0ea"}, {a:"#2f8ac0", l:"#e0f0f8"}, {a:"#2f7a4f", l:"#e2f2e6"}
 ];
 var volumesEl = document.getElementById('volumes');
+function escHTML(x){ return x.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function markQ(text, q){
+  if (!q) return escHTML(text);
+  var i = text.toLowerCase().indexOf(q);
+  if (i < 0) return escHTML(text);
+  return escHTML(text.slice(0,i)) + '<mark>' + escHTML(text.slice(i,i+q.length)) + '</mark>' + escHTML(text.slice(i+q.length));
+}
+/* 方形課按鈕內容：課號、課名（最多四行）、狀態小標 */
+function lessonButtonHTML(b, l, q){
+  var t = b.dataset.title, tag = b.dataset.tag;
+  b.innerHTML = '<strong>' + markQ('第' + l + '課', q) + '</strong>' +
+    (t ? '<span class="ltitle">' + markQ(t, q) + '</span>' : '<span class="ltitle none">標題待補</span>') +
+    (tag ? '<span class="ltag">' + tag + '</span>' : '');
+}
 VOLUMES.forEach(function(title, vi){
   var div = document.createElement('div');
   div.className = 'volume';
@@ -380,8 +514,13 @@ VOLUMES.forEach(function(title, vi){
     (function(l){
       var b = document.createElement('button');
       var t = lessonTitle(vi, l);
-      b.innerHTML = '<strong>第' + l + '課</strong><span class="ltitle">' +
-        (t ? t + (INCOMPLETE[vi + "-" + l] ? '（頁數未完整）' : '') : '標題待補') + '</span>';
+      var key = vi + "-" + l;
+      var tag = INCOMPLETE[key] ? '頁數未完整' : (!CARD_COUNTS[key] ? '圖卡待補' : '');
+      b.dataset.title = t;
+      b.dataset.tag = tag;
+      lessonButtonHTML(b, l, '');
+      if (!CARD_COUNTS[key]) b.className = 'ph';
+      b.title = '第' + l + '課' + (t ? '　' + t : '') + (tag ? '（' + tag + '）' : '');
       b.dataset.search = (title + ' 第' + l + '課 ' + t).toLowerCase();
       b.onclick = function(){ openLesson(vi, l); };
       lessons.appendChild(b);
@@ -391,7 +530,14 @@ VOLUMES.forEach(function(title, vi){
     var open = div.classList.toggle('open');
     btn.setAttribute('aria-expanded', open ? 'true' : 'false');
   };
-  div.appendChild(btn); div.appendChild(lessons); volumesEl.appendChild(div);
+  /* 展開時的裝飾：上緣滴蜜＋角落主題插圖（蜜蜂、蜂巢、奶酪、蜜勺、奶酪碗輪流，左右交替） */
+  var MOTIFS = ['bee','comb','cheese','dipper','bowl'];
+  var drip = document.createElement('div'); drip.className = 'vdrip'; drip.setAttribute('aria-hidden','true');
+  var motif = document.createElementNS('http://www.w3.org/2000/svg','svg');
+  motif.setAttribute('class','vmotif ' + (vi % 2 ? 'l' : 'r')); motif.setAttribute('aria-hidden','true');
+  var use = document.createElementNS('http://www.w3.org/2000/svg','use');
+  use.setAttribute('href','#m-' + MOTIFS[vi % MOTIFS.length]); motif.appendChild(use);
+  div.appendChild(btn); div.appendChild(drip); div.appendChild(lessons); div.appendChild(motif); volumesEl.appendChild(div);
 });
 
 var curV = 0, curL = 1, curP = 1, mode = 'flip';
@@ -464,12 +610,17 @@ document.getElementById('searchInput').addEventListener('input', function(e){
   var vols = volumesEl.children;
   for (var i = 0; i < vols.length; i++){
     var v = vols[i];
-    if (!q){ v.style.display = ''; continue; }
     var btns = v.querySelectorAll('.lessons button');
+    if (!q){
+      v.style.display = '';
+      for (var k = 0; k < btns.length; k++){ btns[k].style.display = ''; lessonButtonHTML(btns[k], k + 1, ''); }
+      continue;
+    }
     var any = false;
     for (var j = 0; j < btns.length; j++){
       var show = btns[j].dataset.search.indexOf(q) >= 0;
       btns[j].style.display = show ? '' : 'none';
+      lessonButtonHTML(btns[j], j + 1, show ? q : '');
       if (show) any = true;
     }
     v.style.display = any ? '' : 'none';
