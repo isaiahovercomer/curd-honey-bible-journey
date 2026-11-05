@@ -200,6 +200,27 @@
   .thMore{font-size:13px;color:var(--muted);margin:0 4px 8px}
   .thMoreBtn{border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 14px;font-family:inherit;font-size:13px;cursor:pointer;color:var(--brown);margin:0 0 10px}
   @media (max-width:480px){.thHead{flex-wrap:wrap;row-gap:0}.thHead small{flex-basis:100%;padding-left:34px}#textHits{padding:10px 10px 4px}.thPage{font-size:13px}.thTitle{font-size:14px}}
+
+  /* ===== 首次造訪使用教學（做法同原文對照聖經：自動出現、底部卡片、高亮目標、其餘變暗） ===== */
+  #tourOverlay{display:none;position:fixed;inset:0;background:rgba(58,42,24,.55);z-index:1000}
+  #tourOverlay.show{display:block}
+  .tourHi{position:relative;z-index:1001!important;outline:3px solid var(--honey2)!important;outline-offset:4px;border-radius:12px;
+    background:var(--card)!important;box-shadow:0 0 0 6px rgba(217,164,65,.28)!important}
+  #tourCard{display:none;position:fixed;left:50%;transform:translateX(-50%);bottom:18px;width:min(560px,calc(100% - 32px));
+    z-index:1002;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px 20px 16px;
+    box-shadow:0 12px 32px rgba(91,63,29,.28);text-align:left}
+  #tourCard.show{display:block}
+  #tourCard h3{margin:0 0 6px;font-size:19px}
+  #tourCard p{margin:0;color:var(--muted);font-size:15px;line-height:1.65}
+  #tourCard .tourStep{font-size:12px;color:var(--honey);letter-spacing:.1em;margin-bottom:4px}
+  .tourBtns{display:flex;gap:8px;justify-content:space-between;align-items:center;margin-top:16px}
+  .tourBtns .tourNav{display:flex;gap:8px}
+  .tourBtns button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 18px;
+    cursor:pointer;font-family:inherit;font-size:15px;color:var(--ink)}
+  .tourBtns button.primary{background:var(--brown);color:#fff;border-color:var(--brown)}
+  .tourBtns button:disabled{opacity:.35;cursor:default}
+  .tourRewatch{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 16px;
+    cursor:pointer;font-family:inherit;font-size:13px;color:var(--brown);margin-bottom:10px}
 </style>
 </head>
 <body>
@@ -319,9 +340,25 @@
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8.8A3.2 3.2 0 1 0 12 15.2 3.2 3.2 0 0 0 12 8.8zm0-2.1a5.3 5.3 0 1 1 0 10.6 5.3 5.3 0 0 1 0-10.6zm6.8-.3a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0zM12 4.2c-2.5 0-2.8 0-3.8.1-2.6.1-3.8 1.3-3.9 3.9 0 1 0 1.3 0 3.8s0 2.8.1 3.8c.1 2.6 1.3 3.8 3.9 3.9 1 0 1.3.1 3.8.1s2.8 0 3.8-.1c2.6-.1 3.8-1.3 3.9-3.9 0-1 0-1.3 0-3.8s0-2.8-.1-3.8c-.1-2.6-1.3-3.8-3.9-3.9-1 0-1.3-.1-3.8-.1z"/></svg>
       </a>
     </div>
+    <p><button class="tourRewatch" id="tourBtn" type="button">使用教學</button></p>
     <p>奶酪與蜂蜜 · 聖經之旅福音選讀</p>
     <p>Facebook · Instagram @tc_yp · Instagram @tcyp.honeymilk</p>
   </footer>
+
+  <!-- 首次造訪使用教學：底部卡片＋高亮目標，做法同原文對照聖經 -->
+  <div id="tourOverlay" aria-hidden="true"></div>
+  <div id="tourCard" role="dialog" aria-modal="true" aria-labelledby="tourTitle">
+    <div class="tourStep" id="tourStep"></div>
+    <h3 id="tourTitle"></h3>
+    <p id="tourText"></p>
+    <div class="tourBtns">
+      <button id="tourSkip" type="button">跳過</button>
+      <span class="tourNav">
+        <button id="tourPrev" type="button">上一步</button>
+        <button id="tourNext" type="button" class="primary">下一步</button>
+      </span>
+    </div>
+  </div>
 
 <script>
 var VOLUMES = [
@@ -739,6 +776,94 @@ document.getElementById('flipCard').addEventListener('touchend', function(e){
   if (dx < -40 && curP < pageCount(curV, curL)){ curP++; render(); }
   if (dx > 40 && curP > 1){ curP--; render(); }
 }, {passive:true});
+
+/* ===== 首次造訪使用教學（做法同原文對照聖經） =====
+   首次載入自動出現：底部卡片＋高亮目標、其餘變暗無法點選；底部固定「跳過／上一步／下一步」，
+   最後一步「下一步」改為「完成」，沒有 X、點卡片外不會關閉；關閉後回到教學開始時的頁面。
+   看過一次就記在瀏覽器 localStorage，不再自動出現；之後點頁尾「使用教學」可重看。 */
+var TOUR_KEY = 'curdHoneyTourSeen';
+var TOUR_STEPS = [
+  {el: function(){ return document.querySelector('.hero h1'); },
+   title: '歡迎使用奶酪與蜂蜜', text: '聖經之旅福音選讀：十五冊共 270 課，每課十頁圖卡，點開就能讀。'},
+  {el: function(){ return document.querySelector('.note'); },
+   title: '目錄在這裡', text: '十五冊共 270 課。點冊名展開十八課，點課名進入該課圖卡。'},
+  {el: function(){ return document.querySelector('.volume > button'); },
+   before: function(){ var v = document.querySelector('.volume'); if (v && !v.classList.contains('open')){ v.classList.add('open'); v.querySelector('button').setAttribute('aria-expanded','true'); tourOpenedVolume = true; } },
+   title: '展開一冊', text: '點冊名展開十八課，再點一次就收起來。'},
+  {el: function(){ return document.querySelector('.volume .lessons button'); },
+   title: '選一課', text: '方形按鈕是一課，上面有課名。還沒有圖卡的課會標「圖卡待補」，課名還沒出現的顯示「標題待補」。'},
+  {el: function(){ return document.getElementById('searchInput'); },
+   title: '搜尋', text: '搜冊名、課名，也能搜圖卡上的文字（經節、詩歌、內文），點結果直接翻到那一頁。'},
+  {el: function(){ return document.querySelector('.lessonHead'); },
+   before: function(){ openLesson(5, 11); },
+   title: '進入課頁', text: '點課就進來這裡。這裡以第六冊第 11 課為例，上方是冊名與課名。'},
+  {el: function(){ return document.querySelector('.pager'); },
+   title: '翻頁', text: '左右按鈕換頁，圓點直接跳到那一頁；鍵盤左右鍵和手機左右滑動也可以。'},
+  {el: function(){ return document.querySelector('.modeBar'); },
+   title: '翻頁或捲動', text: '翻頁是一頁一頁看；切到捲動，全部頁數一次上下排開。'},
+  {el: function(){ return document.getElementById('backBtn'); },
+   title: '回目錄', text: '點這裡回目錄，繼續找下一課。'},
+  {el: function(){ return null; },
+   title: '教學完成', text: '教學就到這裡。之後想再看一次，可以點頁尾的「使用教學」。'}
+];
+var tourStep = 0, tourOpen = false, tourOpenedVolume = false;
+function tourClearHi(){ var hs = document.querySelectorAll('.tourHi'); for (var i = 0; i < hs.length; i++) hs[i].classList.remove('tourHi'); }
+function tourShowStep(i){
+  tourStep = i;
+  tourClearHi();
+  /* 目錄的步驟（0–4）在課頁時看不到，先回到目錄；課頁的步驟（5–9）由第 6 步的 before 進課頁 */
+  if (i <= 4 && document.getElementById('lessonView').style.display === 'block'){
+    document.getElementById('lessonView').style.display = 'none';
+    document.getElementById('catalog').style.display = 'block';
+    history.replaceState(null, '', '#');
+  }
+  var s = TOUR_STEPS[i];
+  if (s.before) s.before();
+  var el = s.el ? s.el() : null;
+  if (el){
+    el.scrollIntoView({block: 'center'});
+    el.classList.add('tourHi');
+  }
+  document.getElementById('tourStep').textContent = '第 ' + (i + 1) + ' 步／共 ' + TOUR_STEPS.length + ' 步';
+  document.getElementById('tourTitle').textContent = s.title;
+  document.getElementById('tourText').textContent = s.text;
+  document.getElementById('tourPrev').disabled = (i === 0);
+  document.getElementById('tourNext').textContent = (i === TOUR_STEPS.length - 1) ? '完成' : '下一步';
+}
+function tourStart(rewatch){
+  if (!rewatch){
+    try { if (window.localStorage && localStorage.getItem(TOUR_KEY)) return; } catch (e) {}
+    if (location.hash && location.hash !== '#') return;
+  }
+  tourOpen = true;
+  tourOpenedVolume = false;
+  document.getElementById('tourOverlay').classList.add('show');
+  document.getElementById('tourCard').classList.add('show');
+  tourShowStep(0);
+}
+function tourEnd(){
+  if (!tourOpen) return;
+  tourOpen = false;
+  tourClearHi();
+  document.getElementById('tourOverlay').classList.remove('show');
+  document.getElementById('tourCard').classList.remove('show');
+  try { if (window.localStorage) localStorage.setItem(TOUR_KEY, '1'); } catch (e) {}
+  /* 回到教學開始時的頁面：回到目錄；第一冊若是導覽展開的，收起來 */
+  document.getElementById('lessonView').style.display = 'none';
+  document.getElementById('catalog').style.display = 'block';
+  var v = document.querySelector('.volume');
+  if (tourOpenedVolume && v && v.classList.contains('open')){ v.classList.remove('open'); v.querySelector('button').setAttribute('aria-expanded','false'); }
+  history.replaceState(null, '', '#');
+  window.scrollTo(0, 0);
+}
+document.getElementById('tourSkip').onclick = tourEnd;
+document.getElementById('tourPrev').onclick = function(){ if (tourStep > 0) tourShowStep(tourStep - 1); };
+document.getElementById('tourNext').onclick = function(){
+  if (tourStep >= TOUR_STEPS.length - 1) tourEnd();
+  else tourShowStep(tourStep + 1);
+};
+document.getElementById('tourBtn').onclick = function(){ tourStart(true); };
+window.addEventListener('load', function(){ setTimeout(function(){ tourStart(false); }, 500); });
 </script>
 </body>
 </html>
