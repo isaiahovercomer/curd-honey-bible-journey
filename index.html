@@ -746,7 +746,7 @@ function normT(x){ var o=''; for (var i=0;i<x.length;i++){ var c=x.charAt(i); o 
 var TEXT_INDEX = null, TEXT_LOADING = null, NORM_CACHE = {};
 function loadTextIndex(){
   if (TEXT_INDEX || TEXT_LOADING) return TEXT_LOADING;
-  TEXT_LOADING = fetch('search-index.json').then(function(r){ return r.json(); }).then(function(d){
+  TEXT_LOADING = fetch('search-index.json', {cache: 'no-cache'}).then(function(r){ return r.json(); }).then(function(d){
     TEXT_INDEX = d.t || {};
     for (var k in TEXT_INDEX) NORM_CACHE[k] = TEXT_INDEX[k].map(normT);
     return TEXT_INDEX;
