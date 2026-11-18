@@ -707,6 +707,15 @@ function renderWeeklyProgress(){
   el.innerHTML = '本週台中市召會聖經之旅進度：<a href="#v' + (p.v + 1) + '-l' + p.l + '" onclick="openLesson(' + p.v + ',' + p.l + ');return false;" title="前往本課圖卡">' + volName + '第' + cnNum(p.l) + '課　' + escHTML(p.title) + '</a>';
 }
 renderWeeklyProgress();
+/* 深連結：直接開課。網址帶 #v14-l2（或 #v14-l2-p3）載入時自動開啟該課該頁；
+   冊課不存在或格式不符時留在目錄，不報錯。 */
+(function(){
+  var m = /^#v(\d+)-l(\d+)(?:-p(\d+))?$/.exec(location.hash || '');
+  if (!m) return;
+  var v = parseInt(m[1], 10) - 1, l = parseInt(m[2], 10), p = m[3] ? parseInt(m[3], 10) : 1;
+  if (v < 0 || v > 14 || l < 1 || l > 18 || p < 1) return;
+  openLesson(v, l, p);
+})();
 document.getElementById('searchInput').addEventListener('input', function(e){
   var q = e.target.value.trim().toLowerCase();
   var vols = volumesEl.children;
