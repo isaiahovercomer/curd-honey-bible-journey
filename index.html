@@ -47,6 +47,13 @@
   .wrap{max-width:760px;margin:0 auto;padding:20px 16px 48px}
   .note{background:var(--card);border:1px solid var(--line);border-radius:14px;
     padding:14px 16px;color:var(--muted);font-size:14px}
+  /* 本週聖經之旅進度（依台中市召會週訊青少年組晨興進度，每週一課） */
+  .weeklyProgress{margin:0 0 16px;background:#fff3d6;border:1.5px solid var(--honey2);
+    border-radius:999px;padding:11px 18px;text-align:center;font-size:15px;color:var(--brown);
+    box-shadow:0 4px 14px rgba(183,121,31,.12)}
+  .weeklyProgress a{color:var(--brown);font-weight:700;text-decoration:underline;text-underline-offset:3px}
+  .weeklyProgress a:hover{color:var(--honey)}
+  @media (max-width:560px){.weeklyProgress{border-radius:14px;font-size:14px;line-height:1.7;padding:10px 14px}}
   .volume{margin-top:16px;border:1px solid var(--line);border-left:7px solid var(--vacc,#e8dcc2);border-radius:14px;
     background:var(--vlight,#fffdf6);overflow:hidden}
   .volume>button strong{color:var(--vacc,#3a2a18)}
@@ -289,6 +296,8 @@
 
   <main class="wrap">
     <section id="catalog">
+      <!-- 本週進度：由下方 JS 依週訊錨點與當週星期一推算填入 -->
+      <div id="weeklyProgress" class="weeklyProgress" hidden></div>
       <img class="introLogo" src="assets/logo.png" alt="TCYP Curds &amp; Honey 標誌" width="160" height="174">
       <div class="note"><svg class="deco noteBee" aria-hidden="true"><use href="#m-bee"/></svg>目錄：聖經之旅十五冊共 270 課。點冊名展開十八課，點課名進入該課圖卡。上方搜尋框可直接找冊名、課名，也能搜尋圖卡上的文字（經節、詩歌、內文），並標出在第幾頁。還沒有圖卡的課仍是十頁版式佔位，課名尚未出現的仍顯示「標題待補」。</div>
       <input class="search" id="searchInput" type="search" placeholder="搜尋冊名、課名或圖卡內文，例如：召會、乳母、約三16…" aria-label="搜尋目錄與圖卡內文">
@@ -666,6 +675,35 @@ function openLesson(v, l, p){
   render(); window.scrollTo(0, 0);
   history.replaceState(null, '', '#v' + (v+1) + '-l' + l + (p > 1 ? '-p' + p : ''));
 }
+/* ===== 本週台中市召會聖經之旅進度：依週訊青少年組晨興進度，每週一課 =====
+   來源：台中市召會週訊（churchintaichung.org）報告事項・青少年組。
+   錨點：第2235期（2026/11/08，涵蓋 11/9～11/15）為第十四冊第三課。
+   核對過的六週（皆每週前進一課，未跳週）：10/05→13-16、10/12→13-17、
+   10/19→13-18、10/26→14-1、11/02→14-2、11/09→14-3。
+   若週訊遇特會週跳週，須以週訊為準修正錨點；每週排程會核對。 */
+var PROGRESS_ANCHOR = { monday: '2026-11-09', v: 13, l: 3 }; /* v 為 0 起算（第十四冊） */
+var PROGRESS_TITLES = { '13-2': '活的盼望與諸天之上的基業', '13-3': '信心的試驗與魂的救恩', '13-4': '聖別的生活與弟兄相愛' }; /* 週訊已刊、目錄尚無的課名 */
+function cnNum(n){ var d = ['零','一','二','三','四','五','六','七','八','九']; if (n < 10) return d[n]; if (n === 10) return '十'; if (n < 20) return '十' + d[n - 10]; return d[Math.floor(n / 10)] + '十' + (n % 10 ? d[n % 10] : ''); }
+function mondayOf(d){ var x = new Date(d.getFullYear(), d.getMonth(), d.getDate()); x.setDate(x.getDate() - ((x.getDay() + 6) % 7)); return x; }
+function progressFor(date){
+  var anchor = new Date(PROGRESS_ANCHOR.monday + 'T00:00:00');
+  var weeks = Math.round((mondayOf(date) - anchor) / 604800000);
+  var total = PROGRESS_ANCHOR.v * 18 + (PROGRESS_ANCHOR.l - 1) + weeks;
+  var v = Math.floor(total / 18), l = total % 18 + 1;
+  if (v < 0 || v > 14) return null;
+  var key = v + '-' + l;
+  return { v: v, l: l, title: PROGRESS_TITLES[key] || TITLES[key] || '標題待補' };
+}
+function renderWeeklyProgress(){
+  var el = document.getElementById('weeklyProgress');
+  if (!el) return;
+  var p = progressFor(new Date());
+  if (!p){ el.hidden = true; return; }
+  el.hidden = false;
+  var volName = VOLUMES[p.v].split('　')[0]; /* 如「第十四冊」 */
+  el.innerHTML = '本週台中市召會聖經之旅進度：<a href="#v' + (p.v + 1) + '-l' + p.l + '" onclick="openLesson(' + p.v + ',' + p.l + ');return false;" title="前往本課圖卡">' + volName + '第' + cnNum(p.l) + '課　' + escHTML(p.title) + '</a>';
+}
+renderWeeklyProgress();
 document.getElementById('searchInput').addEventListener('input', function(e){
   var q = e.target.value.trim().toLowerCase();
   var vols = volumesEl.children;
